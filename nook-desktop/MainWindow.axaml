@@ -1,0 +1,330 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:nook_desktop.ViewModels"
+        mc:Ignorable="d"
+        x:Class="nook_desktop.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        d:DesignWidth="1180"
+        d:DesignHeight="740"
+        Title="nook"
+        Width="1180"
+        Height="740"
+        MinWidth="972"
+        MinHeight="565"
+        CanResize="True"
+        WindowDecorations="None"
+        Background="{DynamicResource SurfaceBaseBrush}"
+        WindowStartupLocation="CenterScreen">
+
+    <!--
+        单层根 Grid：子元素按顺序叠放，后写的盖在上面。
+        顺序 = 主体内容 -> 窗口内浮层。边缘缩放由 Window 层隧道阶段统一命中。
+    -->
+    <!--
+        窗口外框：一圈 #303030 描边，直角。
+        为什么不用圆角：无边框窗口在当前系统上拿不到真透明
+        （TransparencyLevelHint 实测不生效，WS_EX_LAYERED 没设上），
+        Window 本身始终是个矩形。Border 的圆角只是画在内容上，
+        四角会变成"方块里又画了个圆角框"，看着很怪，所以干脆用直角。
+        想要真圆角只能走 Win32 的 DWMWA_WINDOW_CORNER_PREFERENCE。
+    -->
+    <Border Background="{DynamicResource SurfaceBaseBrush}"
+            BorderBrush="#303030"
+            BorderThickness="1">
+    <Grid>
+
+        <!--
+            56 = 顶部边距 8 + 标题栏 48。
+            标题栏与内容区都内缩，形成窗口边框：
+            上方留 8，左右留 8，底部贴边（内容区本来就该铺满到底）。
+        -->
+        <Grid RowDefinitions="56,*">
+
+            <!-- 标题栏：内缩 8，不贴窗口顶边与左右边 -->
+            <Grid Grid.Row="0"
+                  Margin="8,8,8,0"
+                  Background="{DynamicResource SurfaceBaseBrush}">
+
+                <!-- 拖拽层:空白区域按下左键拖动窗口。落在缩放带上时由 Window 层优先接管。 -->
+                <Panel Background="Transparent" PointerPressed="OnTitleBarPointerPressed" />
+
+                <!--
+                    标题栏三栏：左 / 中 / 右。
+                    左栏固定 304 = 左侧导航栏 64 + 频道列表 240，
+                    这样本列右边缘与频道栏分隔线严格对齐（都在 x=312）。
+                    右栏固定 240，与频道页右侧成员栏等宽，
+                    所以它的左边缘与成员栏竖线严格对齐。
+                    ★ 要改侧栏宽度，下面两处必须同步改，否则竖线会错位：
+                      1) 本行 ColumnDefinitions 的第一个值（左栏 304 = 导航栏 64 + 频道栏 240）
+                      2) 本行 ColumnDefinitions 的第三个值（右栏 240 = 成员栏宽）
+                      以及 Views/Room/RoomView.axaml 第 13 行 ColumnDefinitions="240,*,240"
+                    注意不能只取频道栏的 240：下方是导航栏 + 频道栏叠加，
+                    只用 240 会差一个导航栏宽度，对不上。
+                    另外左栏内容本身约需 264px（logo 80 + 间距 18 + 三个图标 114 + 头像 38 + 边距 14），
+                    列宽若小于约 280 会溢出并压到中栏的消息图标上。
+                -->
+                <Grid ColumnDefinitions="304,*,236">
+
+                    <!--
+                        左栏内部再分两小栏：logo 贴最左，气泡+头像组靠分隔线。
+                        第一列用 * 而不是 Auto —— 中间空隙自然撑开，
+                        第二列贴右边，保证图标组紧邻分隔线。
+                    -->
+                    <Grid Grid.Column="0"
+                          ColumnDefinitions="*,Auto"
+                          Margin="14,0,14,0"
+                          VerticalAlignment="Center">
+                        <!--
+                            注意：logo.png 里画的还是 "boop" 字标，
+                            软件改名后这张图需要换成 "nook" 版本。
+                        -->
+                        <Image Source="avares://nook/Assets/logo.png"
+                               Grid.Column="0"
+                               Height="30"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center" />
+
+                        <StackPanel Grid.Column="1"
+                                    Orientation="Horizontal"
+                                    VerticalAlignment="Center"
+                                    Spacing="6">
+                        <!--
+                            设备图标气泡：键盘 / 话筒 / 耳机。
+                            胶囊形：圆角取高度的一半(15)，两端就是半圆。
+                            高度和头像一致(30px),底色 SurfaceHoverBrush(#1E1E1E),外圈包边 #303030(比底色亮才看得见)。
+                        -->
+                        <Border Background="{DynamicResource SurfaceHoverBrush}"
+                                BorderBrush="#303030"
+                                BorderThickness="1"
+                                CornerRadius="15"
+                                Height="30"
+                                Padding="12,0"
+                                VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <Button x:Name="KeyboardButton"
+                                        Classes="devicon"
+                                        Height="28" MinHeight="0" Padding="0"
+                                        PointerEntered="OnDeviceIconPointerEntered"
+                                        PointerExited="OnDeviceIconPointerExited">
+                                    <Canvas Width="28" Height="28">
+                                        <Path Classes="icon"
+                                              Data="{StaticResource IconKeyboard}"
+                                              Width="20" Height="20"
+                                              Stretch="Uniform"
+                                              Canvas.Left="4" Canvas.Top="7" />
+                                    </Canvas>
+                                </Button>
+
+                                <Button x:Name="MicButton"
+                                        Classes="devicon"
+                                        Height="28" MinHeight="0" Padding="0"
+                                        PointerEntered="OnDeviceIconPointerEntered"
+                                        PointerExited="OnDeviceIconPointerExited">
+                                    <Canvas Width="28" Height="28">
+                                        <Path Classes="icon"
+                                              Data="{StaticResource IconMic}"
+                                              Width="20" Height="20"
+                                              Stretch="Uniform"
+                                              Canvas.Left="6" Canvas.Top="4" />
+                                    </Canvas>
+                                </Button>
+
+                                <Button x:Name="HeadphoneButton"
+                                        Classes="devicon"
+                                        Height="28" MinHeight="0" Padding="0"
+                                        PointerEntered="OnDeviceIconPointerEntered"
+                                        PointerExited="OnDeviceIconPointerExited">
+                                    <Canvas Width="28" Height="28">
+                                        <Path Classes="icon"
+                                              Data="{StaticResource IconHeadphones}"
+                                              Width="20" Height="20"
+                                              Stretch="Uniform"
+                                              Canvas.Left="4" Canvas.Top="5" />
+                                    </Canvas>
+                                </Button>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- 头像：右下角为手动设置的状态点 -->
+                        <Panel Margin="8,0,0,0"
+                              VerticalAlignment="Center">
+                            <Border Width="30"
+                                    Height="30"
+                                    CornerRadius="15"
+                                    Background="{DynamicResource SurfaceOverlayBrush}"
+                                    BorderBrush="{DynamicResource BorderStrongBrush}"
+                                    BorderThickness="1">
+                                <TextBlock Text="B"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" />
+                            </Border>
+                            <Ellipse Width="10"
+                                     Height="10"
+                                     HorizontalAlignment="Right"
+                                     VerticalAlignment="Bottom"
+                                     Margin="0,0,-2,-2"
+                                     Stroke="{DynamicResource SurfaceBaseBrush}"
+                                     StrokeThickness="2"
+                                     Fill="{Binding UserStatusBrush}" />
+                        </Panel>
+                    </StackPanel>
+                    </Grid>
+
+                    <!--
+                        左侧分区竖线（频道页 / 设置页才显示）。
+                        页面里自己画的那条线从标题栏下沿才开始，这里补上标题栏这一段，
+                        两段接起来才是从窗口顶部贯穿到底的一条线，否则头像右侧会缺一截。
+                        位置贴着左栏右边缘，正好与频道栏分隔线对齐。
+                    -->
+                    <Border Grid.Column="0"
+                            Width="1"
+                            HorizontalAlignment="Right"
+                            Background="{DynamicResource DividerBrush}"
+                            IsVisible="{Binding ShowLeftDivider}" />
+
+                    <!--
+                        中栏：消息图标 + 搜索框。
+                        标题栏分三栏：左右两栏按内容取最小宽度，中间一栏占满剩余空间，
+                        里面的消息图标与搜索框靠左排列（不是居中）。
+                        消息入口从左侧导航栏搬到了这里，搜索框也从群组页头部搬了上来，
+                        让顶部成为全局区域，而不是每个页面各放一个搜索框。
+                    -->
+                    <StackPanel Grid.Column="1"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Left"
+                                Margin="8,0,0,0"
+                                VerticalAlignment="Center"
+                                Spacing="10">
+                        <Button x:Name="MessagesButton"
+                                Classes="icon"
+                                Command="{Binding ShowMessagesCommand}">
+                            <Path Classes="icon" Data="{StaticResource IconChat}" />
+                        </Button>
+
+                        <TextBox Width="260"
+                                 VerticalAlignment="Center"
+                                 Text="{Binding Groups.SearchText, Mode=TwoWay}"
+                                 PlaceholderText="搜索" />
+                    </StackPanel>
+
+                    <!--
+                        右：极简开关 + 设置 + 最小化 / 全屏 / 退出。
+                        设置直接跳设置页,其余三个走窗口控制命令。
+                        现在拆开：极简改成开关直接切换，设置改成直接跳页，不再需要浮层。
+                    -->
+                    <StackPanel Grid.Column="2"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Right"
+                                Spacing="0"
+                                VerticalAlignment="Center">
+
+                        <!--
+                            设置按钮左侧的一小段分隔线。
+                            刻意不做满高：满高会从窗口顶边一直垂到底，反而抢眼；
+                            短竖线只做视觉分组，不参与整窗对齐。
+                        -->
+                        <Border Width="1"
+                                Height="16"
+                                Margin="0,0,10,0"
+                                VerticalAlignment="Center"
+                                Background="{DynamicResource DividerBrush}" />
+
+                        <Button x:Name="SettingsButton"
+                                Classes="titlebutton"
+                                Command="{Binding OpenSettingsCommand}">
+                            <Path Classes="icon" Data="{StaticResource IconSettings}" />
+                        </Button>
+
+                        <Button Classes="captionbutton"
+                                Command="{Binding MinimizeCommand}">
+                            <Border Classes="minimize"
+                                    Width="14"
+                                    Height="2"
+                                    CornerRadius="1"
+                                    Background="{DynamicResource TextSecondaryBrush}" />
+                        </Button>
+                        <Button Classes="captionbutton"
+                                Command="{Binding MaximizeCommand}">
+                            <Path Classes="icon" Data="{StaticResource IconMaximize}" Width="14" Height="14" />
+                        </Button>
+                        <Button Classes="captionbutton"
+                                Command="{Binding CloseCommand}">
+                            <Path Classes="icon" Data="{StaticResource IconClose}" Width="14" Height="14" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+
+            <!-- 主体：左侧导航 + 页面内容，左右同样内缩 8 与标题栏对齐，底部贴边 -->
+            <Grid Grid.Row="1"
+                  ColumnDefinitions="Auto,*"
+                  Margin="8,0,8,0">
+
+                <Border Grid.Column="0"
+                        Width="64"
+                        Background="{DynamicResource SurfaceRaisedBrush}">
+                    <StackPanel Margin="0,10,0,0"
+                                Spacing="6"
+                                HorizontalAlignment="Center">
+                        <Button Classes="icon"
+                                Classes.activenav="{Binding IsGroupsActive}"
+                                Command="{Binding ShowGroupsCommand}">
+                            <Path Classes="icon" Data="{StaticResource IconHash}" />
+                        </Button>
+                    </StackPanel>
+                </Border>
+
+                <ContentControl Grid.Column="1" Content="{Binding CurrentPage}" />
+            </Grid>
+        </Grid>
+
+        <!--
+            窗口内浮层：菜单全部渲染在窗口内部，不再使用 Flyout。
+            Flyout 是独立的顶层窗口，会画到窗口外面；这里作为窗口内容的最后一层绘制，
+            因此始终被裁剪在窗口范围内。位置由代码按触发图标对齐。
+        -->
+        <Panel>
+            <!--
+                点击空白处收起。
+                Margin 的 48 是关键：遮罩只盖标题栏以下的内容区。
+                一旦它盖住标题栏，悬停图标展开面板的同时图标就收到了 PointerExited，
+                于是 120ms 后收起、遮罩消失、图标又收到 PointerEntered 重新展开——
+                死循环，表现为面板一直闪。
+                标题栏保持可交互后图标不会丢失 hover，闪的问题自然消失。
+            -->
+            <Border IsVisible="{Binding IsAnyPanelOpen}"
+                    Margin="0,56,0,0"
+                    Background="Transparent"
+                    PointerPressed="OnOverlayScrimPressed" />
+
+            <!--
+                面板宿主不挂 PointerEntered/PointerExited：
+                这两个事件在 Avalonia 里是 Direct 路由，不冒泡，
+                指针命中的是宿主内部的子元素，永远传不到宿主上。
+                hover 判定改由窗口级 PointerMoved 做命中测试(见 Core/Shell/TitlePanelController)。
+            -->
+            <ContentControl x:Name="KeyboardPanelHost"
+                            Content="{Binding KeyboardPanel}"
+                            IsVisible="{Binding IsKeyboardPanelOpen}"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top" />
+
+            <ContentControl x:Name="MicPanelHost"
+                            Content="{Binding MicPanel}"
+                            IsVisible="{Binding IsMicPanelOpen}"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top" />
+
+            <ContentControl x:Name="HeadphonePanelHost"
+                            Content="{Binding HeadphonePanel}"
+                            IsVisible="{Binding IsHeadphonePanelOpen}"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top" />
+        </Panel>
+    </Grid>
+    </Border>
+</Window>

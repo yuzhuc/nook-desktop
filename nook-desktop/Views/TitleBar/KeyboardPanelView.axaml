@@ -1,0 +1,32 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:nook_desktop.ViewModels.TitleBar"
+             mc:Ignorable="d"
+             x:Class="nook_desktop.Views.TitleBar.KeyboardPanelView"
+             x:DataType="vm:KeyboardPanelViewModel"
+             Width="260">
+    <Border Classes="flyoutpanel">
+        <StackPanel Spacing="12">
+            <TextBlock Classes="h2" Text="{Binding Title}" />
+
+            <ComboBox PlaceholderText="未检测到输入设备" IsEnabled="False" />
+
+            <Border Classes="divider" />
+
+            <TextBlock Classes="caption" Text="快捷键" />
+
+            <ItemsControl ItemsSource="{Binding Shortcuts}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="vm:ShortcutItem">
+                        <Grid ColumnDefinitions="70,*" Margin="0,3">
+                            <TextBlock Grid.Column="0" Classes="caption" Text="{Binding Key}" />
+                            <TextBlock Grid.Column="1" Classes="caption" Text="{Binding Description}" />
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </Border>
+</UserControl>

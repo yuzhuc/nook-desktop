@@ -1,0 +1,39 @@
+# Build outputs
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+artifacts/
+publish/
+*.binlog
+
+# Visual Studio and other IDEs
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.rsuser
+
+# Rider
+*.sln.iml
+
+# Test and coverage output
+[Tt]est[Rr]esult*/
+coverage/
+*.coverage
+*.coveragexml
+*.trx
+
+# NuGet
+packages/
+*.nupkg
+*.snupkg
+
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/

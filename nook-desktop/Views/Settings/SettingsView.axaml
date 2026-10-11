@@ -1,0 +1,86 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:nook_desktop.ViewModels.Settings"
+             mc:Ignorable="d"
+             x:Class="nook_desktop.Views.Settings.SettingsView"
+             x:DataType="vm:SettingsViewModel"
+             d:DesignWidth="1180"
+             d:DesignHeight="700">
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <Border Grid.Row="0"
+                Padding="20,16"
+                BorderBrush="{DynamicResource BorderSubtleBrush}"
+                BorderThickness="0,0,0,1">
+            <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                <Button Classes="icon" Command="{Binding BackCommand}" ToolTip.Tip="返回">
+                    <Path Classes="icon" Data="{StaticResource IconChevronLeft}" />
+                </Button>
+                <TextBlock Classes="h2" Text="设置" VerticalAlignment="Center" />
+            </StackPanel>
+        </Border>
+
+        <ScrollViewer Grid.Row="1" Padding="20">
+            <StackPanel MaxWidth="520" HorizontalAlignment="Center" Spacing="16">
+
+                <Border Classes="panel" Padding="20,18">
+                    <StackPanel Spacing="16">
+                        <TextBlock Classes="h2" Text="音频" />
+
+                        <StackPanel Spacing="8">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Grid.Column="0" Text="麦克风音量" />
+                                <TextBlock Grid.Column="1"
+                                           Classes="caption"
+                                           Text="{Binding InputVolume, StringFormat={}{0:F0}}" />
+                            </Grid>
+                            <Slider Minimum="0" Maximum="100"
+                                    Value="{Binding InputVolume}" />
+                        </StackPanel>
+
+                        <StackPanel Spacing="8">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Grid.Column="0" Text="扬声器音量" />
+                                <TextBlock Grid.Column="1"
+                                           Classes="caption"
+                                           Text="{Binding OutputVolume, StringFormat={}{0:F0}}" />
+                            </Grid>
+                            <Slider Minimum="0" Maximum="100"
+                                    Value="{Binding OutputVolume}" />
+                        </StackPanel>
+
+                        <Border Classes="divider" />
+
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="输入设备" />
+                            <ComboBox PlaceholderText="未检测到设备" IsEnabled="False" />
+                        </StackPanel>
+
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="输出设备" />
+                            <ComboBox PlaceholderText="未检测到设备" IsEnabled="False" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border Classes="panel" Padding="20,18">
+                    <StackPanel Spacing="16">
+                        <TextBlock Classes="h2" Text="语音" />
+
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="默认麦克风灵敏度" />
+                            <ComboBox PlaceholderText="默认" IsEnabled="False" />
+                        </StackPanel>
+
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="降噪方式" />
+                            <ComboBox PlaceholderText="默认" IsEnabled="False" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

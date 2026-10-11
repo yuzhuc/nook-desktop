@@ -1,0 +1,29 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:nook_desktop.ViewModels.Messages"
+             mc:Ignorable="d"
+             x:Class="nook_desktop.Views.Messages.MessagesView"
+             x:DataType="vm:MessagesViewModel"
+             d:DesignWidth="1180"
+             d:DesignHeight="700">
+    <Grid RowDefinitions="Auto,*">
+        <StackPanel Grid.Row="0" Margin="20,18" Spacing="2">
+            <TextBlock Classes="h1" Text="消息" />
+            <TextBlock Classes="caption" Text="群组内的私信会显示在这里" />
+        </StackPanel>
+
+        <StackPanel Grid.Row="1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Spacing="10">
+            <Path Classes="icon"
+                  Data="{StaticResource IconChat}"
+                  Width="28"
+                  Height="28"
+                  HorizontalAlignment="Center" />
+            <TextBlock Text="{Binding EmptyHint}" HorizontalAlignment="Center" />
+        </StackPanel>
+    </Grid>
+</UserControl>

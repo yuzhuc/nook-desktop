@@ -1,0 +1,24 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--
+      线性图标集合,统一 24x24 视口,使用 Path 矢量绘制,避免引入位图资源。
+      颜色继承 Foreground,通过 Data 绑定到 Path 的 Data。
+    -->
+
+    <Geometry x:Key="IconMic">M12 3a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3zM5 11a7 7 0 0 0 14 0M12 18v3</Geometry>
+    <Geometry x:Key="IconHeadphones">M4 14v-2a8 8 0 0 1 16 0v2M4 14a2 2 0 0 1 2-2h1v6H6a2 2 0 0 1-2-2zM20 14a2 2 0 0 0-2-2h-1v6h1a2 2 0 0 0 2-2z</Geometry>
+    <Geometry x:Key="IconSettings">M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.2a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 3 15a2 2 0 0 1-2 0 2 2 0 0 1 0-4 1.7 1.7 0 0 0 1.2-2.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.7 1.7 0 0 0 8 4.2a2 2 0 1 1 4 0 1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1A1.7 1.7 0 0 0 19 11a2 2 0 0 1 0 4z</Geometry>
+    <Geometry x:Key="IconUsers">M16 20v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 20v-2a4 4 0 0 0-3-3.9M16 2.1a4 4 0 0 1 0 7.8</Geometry>
+    <Geometry x:Key="IconChat">M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-4-.9L3 21l1.9-4.9A8.4 8.4 0 0 1 4 11.5a8.5 8.5 0 0 1 17 0z</Geometry>
+    <Geometry x:Key="IconHash">M4 9h16M4 15h16M10 3L8 21M16 3l-2 18</Geometry>
+    <Geometry x:Key="IconPlus">M12 5v14M5 12h14</Geometry>
+    <Geometry x:Key="IconSend">M22 2L11 13M22 2l-7 20-4-9-9-4z</Geometry>
+    <Geometry x:Key="IconPhoneOff">M10.7 13.3a16 16 0 0 0 4.6 3.1l1.5-1.5a1 1 0 0 1 1-.2c1.1.4 2.3.6 3.5.6a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.2.2 2.4.6 3.5a1 1 0 0 1-.2 1zM2 2l20 20</Geometry>
+    <Geometry x:Key="IconScreen">M3 5h18v11H3zM9 20h6M12 16v4</Geometry>
+    <Geometry x:Key="IconChevronLeft">M15 18l-6-6 6-6</Geometry>
+    <Geometry x:Key="IconMaximize">M5 5h14v14H5z</Geometry>
+    <Geometry x:Key="IconClose">M18 6L6 18M6 6l12 12</Geometry>
+
+
+    <Geometry x:Key="IconKeyboard">M3 6h18v12H3zM7 10h1M11 10h1M15 10h1M17 10h1M7 14h10</Geometry>
+</ResourceDictionary>

@@ -1,0 +1,39 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:nook_desktop.ViewModels.TitleBar"
+             mc:Ignorable="d"
+             x:Class="nook_desktop.Views.TitleBar.HeadphonePanelView"
+             x:DataType="vm:HeadphonePanelViewModel"
+             Width="260">
+    <Border Classes="flyoutpanel">
+        <StackPanel Spacing="12">
+            <TextBlock Classes="h2" Text="{Binding Title}" />
+
+            <StackPanel Spacing="6">
+                <Grid ColumnDefinitions="*,Auto">
+                    <TextBlock Grid.Column="0" Text="扬声器" VerticalAlignment="Center" />
+                    <Button Grid.Column="1"
+                            Classes="secondary"
+                            Padding="10,4"
+                            MinHeight="28"
+                            FontSize="12"
+                            Content="{Binding DeafenText}"
+                            Command="{Binding ToggleDeafenCommand}" />
+                </Grid>
+                <ComboBox PlaceholderText="未检测到输出设备" IsEnabled="False" />
+            </StackPanel>
+
+            <Border Classes="divider" />
+
+            <StackPanel Spacing="6">
+                <Grid ColumnDefinitions="*,Auto">
+                    <TextBlock Grid.Column="0" Text="音量" />
+                    <TextBlock Grid.Column="1" Classes="caption" Text="{Binding VolumeText}" />
+                </Grid>
+                <Slider Minimum="0" Maximum="100" Value="{Binding Volume}" />
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</UserControl>

@@ -1,0 +1,85 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- 品牌中性色：深色界面为主，层级靠明度区分 -->
+    <!--
+        CMD 风格纯色底：标题栏、左侧导航、页面内容、浮层全部用同一个纯黑，
+        不靠明度分层。之前 #15161B / #1D1F26 / #262932 三个明度叠出层级，
+        相邻区域之间会出现明显接缝（色差）。
+        只保留"悬停"一档提亮，那是交互反馈，不是底色分层。
+    -->
+    <Color x:Key="SurfaceBaseColor">#121212</Color>
+    <Color x:Key="SurfaceRaisedColor">#121212</Color>
+    <Color x:Key="SurfaceOverlayColor">#121212</Color>
+    <Color x:Key="SurfaceHoverColor">#1E1E1E</Color>
+
+    <Color x:Key="BorderSubtleColor">#1E1E1E</Color>
+    <Color x:Key="BorderStrongColor">#3C3C3C</Color>
+    <!--
+        分区竖线专用色。不能用 BorderSubtleColor：#1E1E1E 压在 #121212 背景上
+        只差 12 个色阶，1px 细线几乎看不见。分隔线要"刚好能看见但不发亮"，
+        所以单独给一档，比卡片边框略亮。
+    -->
+    <Color x:Key="DividerColor">#2E2E2E</Color>
+
+    <Color x:Key="TextPrimaryColor">#C8C8C8</Color>
+    <Color x:Key="TextSecondaryColor">#9A9A9A</Color>
+    <Color x:Key="TextMutedColor">#6A6A6A</Color>
+    <Color x:Key="TextHoverColor">#EDEDED</Color>
+
+    <!-- 强调色：青蓝，用于主操作与在线状态 -->
+    <Color x:Key="AccentColor">#3B9EFF</Color>
+    <Color x:Key="AccentHoverColor">#55ACFF</Color>
+    <Color x:Key="AccentPressedColor">#2F87E0</Color>
+
+    <!-- 语义色 -->
+    <Color x:Key="SuccessColor">#3DD68C</Color>
+    <Color x:Key="DangerColor">#F2555A</Color>
+
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Dark">
+            <SolidColorBrush x:Key="SurfaceBaseBrush" Color="{StaticResource SurfaceBaseColor}" />
+            <SolidColorBrush x:Key="SurfaceRaisedBrush" Color="{StaticResource SurfaceRaisedColor}" />
+            <SolidColorBrush x:Key="SurfaceOverlayBrush" Color="{StaticResource SurfaceOverlayColor}" />
+            <SolidColorBrush x:Key="SurfaceHoverBrush" Color="{StaticResource SurfaceHoverColor}" />
+
+            <SolidColorBrush x:Key="BorderSubtleBrush" Color="{StaticResource BorderSubtleColor}" />
+            <SolidColorBrush x:Key="BorderStrongBrush" Color="{StaticResource BorderStrongColor}" />
+            <SolidColorBrush x:Key="DividerBrush" Color="{StaticResource DividerColor}" />
+
+            <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimaryColor}" />
+            <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondaryColor}" />
+            <SolidColorBrush x:Key="TextHoverBrush" Color="{StaticResource TextHoverColor}" />
+            <SolidColorBrush x:Key="TextMutedBrush" Color="{StaticResource TextMutedColor}" />
+
+            <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}" />
+            <SolidColorBrush x:Key="AccentHoverBrush" Color="{StaticResource AccentHoverColor}" />
+            <SolidColorBrush x:Key="AccentPressedBrush" Color="{StaticResource AccentPressedColor}" />
+
+            <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}" />
+            <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource DangerColor}" />
+        </ResourceDictionary>
+
+        <ResourceDictionary x:Key="Light">
+            <SolidColorBrush x:Key="SurfaceBaseBrush" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="SurfaceRaisedBrush" Color="#F5F6F9" />
+            <SolidColorBrush x:Key="SurfaceOverlayBrush" Color="#EBEDF2" />
+            <SolidColorBrush x:Key="SurfaceHoverBrush" Color="#DFE2EA" />
+
+            <SolidColorBrush x:Key="BorderSubtleBrush" Color="#E3E6ED" />
+            <SolidColorBrush x:Key="BorderStrongBrush" Color="#C8CDD8" />
+            <SolidColorBrush x:Key="DividerBrush" Color="#D5D9E2" />
+
+            <SolidColorBrush x:Key="TextPrimaryBrush" Color="#1A1C22" />
+            <SolidColorBrush x:Key="TextSecondaryBrush" Color="#5A6070" />
+            <SolidColorBrush x:Key="TextMutedBrush" Color="#8B91A1" />
+            <SolidColorBrush x:Key="TextHoverBrush" Color="#3A3F4C" />
+
+            <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}" />
+            <SolidColorBrush x:Key="AccentHoverBrush" Color="{StaticResource AccentHoverColor}" />
+            <SolidColorBrush x:Key="AccentPressedBrush" Color="{StaticResource AccentPressedColor}" />
+
+            <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}" />
+            <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource DangerColor}" />
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+</ResourceDictionary>
