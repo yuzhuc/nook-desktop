@@ -1,0 +1,51 @@
+name: Deploy standalone to build branch
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: windows-latest
+    concurrency: ci-${{ github.ref }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore nook-desktop.slnx
+
+      - name: Publish application
+        run: >
+          dotnet publish nook-desktop/nook-desktop.csproj
+          --configuration Release
+          --runtime win-x64
+          --self-contained true
+          --output ./publish
+
+      - name: Copy repository files
+        shell: pwsh
+        run: |
+          Copy-Item README.md publish/
+          Copy-Item README_zh.md publish/
+          Copy-Item LICENSE.txt publish/
+
+      - name: Deploy to build branch
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: publish
+          branch: build
+          clean: true
+          git-config-name: github-actions[bot]
+          git-config-email: github-actions[bot]@users.noreply.github.com

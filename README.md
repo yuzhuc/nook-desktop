@@ -1,45 +1,68 @@
 # nook-desktop
 
-基于 Avalonia 12 + .NET 10 的桌面语音聊天客户端骨架(对标 Oopz)。开源项目,无登录注册、无商城、无发现,开屏直接展示群组。当前只搭建架构与界面框架,不含业务功能。
+nook-desktop 是一个基于 Avalonia 12 与 .NET 10 的桌面语音聊天客户端骨架,界面和信息架构对标 Oopz。
 
-## 目录结构
+项目定位是开源、直接可用的桌面客户端:当前阶段聚焦于应用外壳、导航、MVVM 架构和各页面布局,真实账号、实时语音、聊天后端等能力尚未接入。启动后直接进入群组页,不提供登录注册、商城或发现页。
 
-    Core/Mvvm/         ObservableObject、RelayCommand(含泛型与异步)、ViewModelBase
-    Core/Navigation/   INavigationService、NavigationService、ViewLocator
-    Core/Shell/        无边框窗口外壳:边缘缩放、DWM 圆角、标题栏浮层定位
-    Models/            Group、Channel、RoomMember、ChatMessage 等领域模型
-    Services/          服务接口 + 本地占位实现 + AppServices 组合根
-    Themes/            Palette(配色)、Icons(矢量图标)、Controls/ButtonTheme(控件样式)
-    ViewModels/        按页面划分:Groups(开屏)、Room、Settings、TitleBar(标题栏弹出面板)
-    Views/             对应页面,与 ViewModel 通过 ViewLocator 约定映射
+## 当前状态
 
-## 约定
+- 已完成无边框主窗口、边缘缩放、DWM 窗口圆角与标题栏设备浮层。
+- 已完成群组页、群组内房间页、设置页、好友页、消息页和标题栏面板的界面骨架。
+- 已建立 MVVM、导航和服务分层,页面通过构造函数获取依赖。
+- 音频设备、语音会话、聊天和设置目前使用 `Services/PlaceholderServices.cs` 中的本地占位实现。
+- 项目尚无测试工程,也未接入真实后端协议与持久化。
 
-- ViewModel 命名 `XxxViewModel`,视图命名 `XxxView`,放在同名的 `ViewModels` / `Views` 命名空间下,`ViewLocator` 会自动解析。
-- Avalonia 12 默认开启编译绑定,新增视图必须声明 `x:DataType`。
-- 所有样式集中在 `Themes`,界面内不写死颜色与圆角。
-- 依赖通过构造函数注入:`AppServices` 在 `App.OnFrameworkInitializationCompleted` 里装配一次,
-  再逐层传给 ViewModel。不要在 ViewModel 里引用静态服务入口。
-- 标题栏的悬停弹层不使用 `Flyout`:Flyout 是独立顶层窗口,会画到窗口外面。
-  浮层作为窗口内容的最后一层渲染,位置由 `Core/Shell/TitlePanelController` 运行时对齐。
-- 图标设计约束:几何包围盒**必须是方形**。`Stretch="Uniform"` 对扁长几何(如单条横线)
-  不会做垂直居中,会顶到上方。扁平图形改用 `Border` 由布局居中,不依赖几何缩放。
+## 技术栈
 
-## 无边框窗口
+- .NET 10
+- Avalonia 12.1.2
+- Fluent Theme
+- C# / MVVM
 
-`WindowDecorations="None"` 会连 `WS_THICKFRAME` 一并去掉,`BeginResizeDrag` 会完全失效,
-因此缩放由 `Core/Shell/WindowEdgeResizer` 处理:命中四边六像素带,按下后捕获指针,
-手动驱动 `Width`/`Height`/`Position`。命中与缩放都注册在隧道阶段 —— 边缘常压在群组卡片
-这类 Button 上,冒泡阶段的事件会被子控件标记为已处理。
+## 运行环境
 
-窗口圆角走 `DwmSetWindowAttribute(DWMWA_WINDOW_CORNER_PREFERENCE)`(见 `WindowCorners`),
-由系统直接裁剪窗口形状,不依赖窗口透明。该属性在最大化/还原后会被系统重置,所以窗口状态
-变化时要重新应用。
+- Windows 10 或更高版本
+- .NET 10 SDK
+
+当前窗口外壳包含 Windows 专用的 DWM 圆角和 Win32 窗口行为,因此现阶段以 Windows 为主要运行目标。
+
+## 构建与运行
+
+```powershell
+dotnet restore nook-desktop.slnx
+dotnet build nook-desktop.slnx
+dotnet run --project nook-desktop/nook-desktop.csproj
+```
+
+## 项目结构
+
+```text
+nook-desktop/
+├─ Core/
+│  ├─ Mvvm/         ObservableObject、RelayCommand、ViewModelBase
+│  ├─ Navigation/   导航服务与 ViewModel/View 约定映射
+│  └─ Shell/        无边框窗口缩放、圆角、标题栏浮层控制
+├─ Models/          群组、频道、成员、聊天等领域模型
+├─ Services/        服务接口、占位实现与组合根
+├─ Themes/          配色、图标、按钮和控件样式
+├─ ViewModels/      按页面和标题栏面板划分
+├─ Views/           与 ViewModel 对应的 Avalonia 视图
+├─ Assets/          应用图片资源
+├─ App.axaml        应用资源、主题和 ViewLocator 注册
+└─ MainWindow.axaml 主窗口布局与窗口内浮层
+```
 
 ## 接入真实功能
 
-`AppServices.CreateDefault()` 目前装配的是 `Services/PlaceholderServices.cs` 里的本地实现,
-接入真实后端时替换该方法的构造参数即可,ViewModel 层不用改动。
+业务接口位于 `nook-desktop/Services/`。接入真实后端时,在 `AppServices.CreateDefault()` 中替换占位实现即可,ViewModel 层无需感知具体实现。
 
-`GroupsViewModel.SeedPlaceholderGroups()` 与 `RoomViewModel.SeedPlaceholderMembers()` 提供
-占位数据,仅用于在没有后端时走通界面,接入真实数据源后删除。
+`GroupsViewModel.SeedPlaceholderGroups()` 和 `RoomViewModel.SeedPlaceholderMembers()` 仅用于在没有后端时展示页面,接入真实数据后应删除。
+
+## 开发文档
+
+- [MEMORY.md](MEMORY.md):架构决策、项目约束、外壳实现细节和已知缺口。
+- [AGENTS.md](AGENTS.md):代码代理在本仓库中的工作约定。
+
+## 许可证
+
+本项目使用根目录下的 [LICENSE.txt](LICENSE.txt)。

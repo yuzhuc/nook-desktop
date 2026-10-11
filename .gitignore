@@ -8,8 +8,6 @@ publish/
 *.binlog
 
 # Visual Studio and other IDEs
-.vs/
-.vscode/
 .idea/
 *.suo
 *.user
