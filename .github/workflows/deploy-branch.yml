@@ -10,10 +10,19 @@ permissions:
   contents: write
 
 jobs:
-  build-and-deploy:
-    runs-on: windows-latest
-    concurrency: ci-${{ github.ref }}
-
+  build:
+    name: Build ${{ matrix.runtime }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            runtime: osx-x64
+          - os: ubuntu-latest
+            runtime: linux-x64
+          - os: windows-latest
+            runtime: win-x64
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -30,16 +39,49 @@ jobs:
         run: >
           dotnet publish nook-desktop/nook-desktop.csproj
           --configuration Release
-          --runtime win-x64
+          --runtime ${{ matrix.runtime }}
           --self-contained true
           --output ./publish
 
-      - name: Copy repository files
-        shell: pwsh
+      - name: Package build
+        shell: bash
+        run: tar -czf "${{ matrix.runtime }}.tar.gz" -C publish .
+
+      - name: Upload build
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.runtime }}
+          path: ${{ matrix.runtime }}.tar.gz
+          if-no-files-found: error
+
+  deploy:
+    name: Deploy to build branch
+    needs: build
+    runs-on: ubuntu-latest
+    concurrency: ci-${{ github.ref }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Download builds
+        uses: actions/download-artifact@v4
+        with:
+          pattern: "*-x64"
+          path: artifacts
+
+      - name: Extract builds
         run: |
-          Copy-Item README.md publish/
-          Copy-Item README_zh.md publish/
-          Copy-Item LICENSE.txt publish/
+          mkdir -p publish
+          for archive in artifacts/*/*.tar.gz; do
+            runtime="$(basename "$archive" .tar.gz)"
+            mkdir -p "publish/$runtime"
+            tar -xzf "$archive" -C "publish/$runtime"
+          done
+
+      - name: Copy repository files
+        run: |
+          cp README.md README_zh.md LICENSE.txt publish/
 
       - name: Deploy to build branch
         uses: JamesIves/github-pages-deploy-action@v4
