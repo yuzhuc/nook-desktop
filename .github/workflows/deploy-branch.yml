@@ -2,32 +2,76 @@ name: Deploy standalone to build branch
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
+    inputs:
+      osx_x64:
+        description: macOS x64
+        type: boolean
+        default: false
+      osx_arm64:
+        description: macOS arm64
+        type: boolean
+        default: false
+      linux_x64:
+        description: Linux x64
+        type: boolean
+        default: false
+      linux_arm64:
+        description: Linux arm64
+        type: boolean
+        default: false
+      win_x64:
+        description: Windows x64
+        type: boolean
+        default: true
+      win_arm64:
+        description: Windows arm64
+        type: boolean
+        default: false
 
 permissions:
   contents: write
 
 jobs:
+  prepare:
+    name: Prepare matrix
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - name: Select targets
+        id: matrix
+        shell: bash
+        env:
+          OSX_X64: ${{ inputs.osx_x64 }}
+          OSX_ARM64: ${{ inputs.osx_arm64 }}
+          LINUX_X64: ${{ inputs.linux_x64 }}
+          LINUX_ARM64: ${{ inputs.linux_arm64 }}
+          WIN_X64: ${{ inputs.win_x64 }}
+          WIN_ARM64: ${{ inputs.win_arm64 }}
+        run: |
+          entries=()
+          add() {
+            entries+=("{\"os\":\"$1\",\"runtime\":\"$2\"}")
+          }
+          if [[ "$OSX_X64" == "true" ]]; then add macos-latest osx-x64; fi
+          if [[ "$OSX_ARM64" == "true" ]]; then add macos-latest osx-arm64; fi
+          if [[ "$LINUX_X64" == "true" ]]; then add ubuntu-latest linux-x64; fi
+          if [[ "$LINUX_ARM64" == "true" ]]; then add ubuntu-latest linux-arm64; fi
+          if [[ "$WIN_X64" == "true" ]]; then add windows-latest win-x64; fi
+          if [[ "$WIN_ARM64" == "true" ]]; then add windows-latest win-arm64; fi
+          if [[ ${#entries[@]} -eq 0 ]]; then
+            echo "::error::At least one target must be selected."
+            exit 1
+          fi
+          joined=$(IFS=,; echo "${entries[*]}")
+          echo "matrix={\"include\":[$joined]}" >> "$GITHUB_OUTPUT"
+
   build:
     name: Build ${{ matrix.runtime }}
+    needs: prepare
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - os: macos-latest
-            runtime: osx-x64
-          - os: macos-latest
-            runtime: osx-arm64
-          - os: ubuntu-latest
-            runtime: linux-x64
-          - os: ubuntu-latest
-            runtime: linux-arm64
-          - os: windows-latest
-            runtime: win-x64
-          - os: windows-latest
-            runtime: win-arm64
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
