@@ -1,35 +1,18 @@
 name: Deploy standalone to build branch
 
 on:
-  workflow_dispatch:
-    inputs:
-      osx_x64:
-        description: macOS x64
-        type: boolean
-        default: false
-      osx_arm64:
-        description: macOS arm64
-        type: boolean
-        default: false
-      linux_x64:
-        description: Linux x64
-        type: boolean
-        default: false
-      linux_arm64:
-        description: Linux arm64
-        type: boolean
-        default: false
-      win_x64:
-        description: Windows x64
-        type: boolean
-        default: true
-      win_arm64:
-        description: Windows arm64
-        type: boolean
-        default: false
   push:
     branches:
       - main
+
+env:
+  # 修改这里后推送 main，即可选择要构建的目标。
+  BUILD_OSX_X64: "false"
+  BUILD_OSX_ARM64: "false"
+  BUILD_LINUX_X64: "false"
+  BUILD_LINUX_ARM64: "false"
+  BUILD_WIN_X64: "true"
+  BUILD_WIN_ARM64: "false"
 
 permissions:
   contents: write
@@ -44,25 +27,17 @@ jobs:
       - name: Select targets
         id: matrix
         shell: bash
-        env:
-          EVENT_NAME: ${{ github.event_name }}
-          OSX_X64: ${{ inputs.osx_x64 }}
-          OSX_ARM64: ${{ inputs.osx_arm64 }}
-          LINUX_X64: ${{ inputs.linux_x64 }}
-          LINUX_ARM64: ${{ inputs.linux_arm64 }}
-          WIN_X64: ${{ inputs.win_x64 }}
-          WIN_ARM64: ${{ inputs.win_arm64 }}
         run: |
           entries=()
           add() {
             entries+=("{\"os\":\"$1\",\"runtime\":\"$2\"}")
           }
-          if [[ "$EVENT_NAME" == "push" || "$OSX_X64" == "true" ]]; then add macos-latest osx-x64; fi
-          if [[ "$EVENT_NAME" == "push" || "$OSX_ARM64" == "true" ]]; then add macos-latest osx-arm64; fi
-          if [[ "$EVENT_NAME" == "push" || "$LINUX_X64" == "true" ]]; then add ubuntu-latest linux-x64; fi
-          if [[ "$EVENT_NAME" == "push" || "$LINUX_ARM64" == "true" ]]; then add ubuntu-latest linux-arm64; fi
-          if [[ "$EVENT_NAME" == "push" || "$WIN_X64" == "true" ]]; then add windows-latest win-x64; fi
-          if [[ "$EVENT_NAME" == "push" || "$WIN_ARM64" == "true" ]]; then add windows-latest win-arm64; fi
+          if [[ "$BUILD_OSX_X64" == "true" ]]; then add macos-latest osx-x64; fi
+          if [[ "$BUILD_OSX_ARM64" == "true" ]]; then add macos-latest osx-arm64; fi
+          if [[ "$BUILD_LINUX_X64" == "true" ]]; then add ubuntu-latest linux-x64; fi
+          if [[ "$BUILD_LINUX_ARM64" == "true" ]]; then add ubuntu-latest linux-arm64; fi
+          if [[ "$BUILD_WIN_X64" == "true" ]]; then add windows-latest win-x64; fi
+          if [[ "$BUILD_WIN_ARM64" == "true" ]]; then add windows-latest win-arm64; fi
           if [[ ${#entries[@]} -eq 0 ]]; then
             echo "::error::At least one target must be selected."
             exit 1
