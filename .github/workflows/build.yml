@@ -22,18 +22,30 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: macOS
+          - name: macOS x64
             os: macos-latest
             runtime: osx-x64
             package_prefix: nook-desktop-osx-x64
-          - name: Linux
+          - name: macOS arm64
+            os: macos-latest
+            runtime: osx-arm64
+            package_prefix: nook-desktop-osx-arm64
+          - name: Linux x64
             os: ubuntu-latest
             runtime: linux-x64
             package_prefix: nook-desktop-linux-x64
-          - name: Windows
+          - name: Linux arm64
+            os: ubuntu-latest
+            runtime: linux-arm64
+            package_prefix: nook-desktop-linux-arm64
+          - name: Windows x64
             os: windows-latest
             runtime: win-x64
             package_prefix: nook-desktop-win-x64
+          - name: Windows arm64
+            os: windows-latest
+            runtime: win-arm64
+            package_prefix: nook-desktop-win-arm64
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout code

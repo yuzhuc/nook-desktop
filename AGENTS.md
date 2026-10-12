@@ -5,6 +5,13 @@
 - 默认使用中文沟通;代码、命令、路径和错误信息保留原文。
 - 默认先读取相关源码、配置和最近的局部改动;只有任务涉及项目背景、构建运行方式、架构、接口或长期约定时,才按需读取 `README.md` 或 `MEMORY.md` 的相关部分。
 
+## Semantic Cache MCP
+
+- 每个用户请求开始后,先调用 `semantic-cache` 的 `stats`;简单问答也必须完成这次调用,用于确认 MCP 可用并记录本回合使用。
+- 涉及项目文件时,优先使用 `semantic-cache` 的 `glob`、`warm`、`grep`、`search`、`read` 和 `batch_read` 完成检索与读取;写入、修改优先使用 `write`、`edit` 或 `batch_edit`。
+- 如果 `semantic-cache` 未注入、启动失败或调用超时,不得静默跳过;必须明确告知用户不可用,再使用普通工具完成任务。
+- `clear` 和 `delete` 仅在用户明确要求或确认缓存异常时调用,不得例行调用。
+
 ## 项目规则
 
 - 技术栈:Avalonia 12.1.2、.NET 10、C# MVVM。
