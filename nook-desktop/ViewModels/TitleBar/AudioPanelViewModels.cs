@@ -136,26 +136,3 @@ public sealed class HeadphonePanelViewModel : ViewModelBase
         IsDeafened = target;
     }
 }
-
-public sealed class KeyboardPanelViewModel : ViewModelBase
-{
-    public KeyboardPanelViewModel(IAudioDeviceService audioDevice)
-    {
-        Devices = new ObservableCollection<AudioDevice>(audioDevice.InputDevices);
-        Shortcuts = new ObservableCollection<ShortcutItem>
-        {
-            new("F1", "打开设置"),
-            new("F2", "切换麦克风静音"),
-            new("F3", "切换静音听"),
-            new("F4", "离开当前房间"),
-        };
-    }
-
-    public string Title => "键盘";
-
-    public ObservableCollection<AudioDevice> Devices { get; }
-
-    public ObservableCollection<ShortcutItem> Shortcuts { get; }
-}
-
-public sealed record ShortcutItem(string Key, string Description);

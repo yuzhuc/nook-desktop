@@ -4,7 +4,6 @@ using nook_desktop.Core.Mvvm;
 using nook_desktop.Core.Navigation;
 using nook_desktop.Models;
 using nook_desktop.Services;
-using nook_desktop.ViewModels.Friends;
 using nook_desktop.ViewModels.Groups;
 using nook_desktop.ViewModels.Messages;
 using nook_desktop.ViewModels.Room;
@@ -24,30 +23,38 @@ public sealed class MainWindowViewModel : ViewModelBase
         _navigation = new NavigationService();
 
         Groups = new GroupsViewModel(_navigation, services);
-        Friends = new FriendsViewModel();
-        Messages = new MessagesViewModel();
+        Messages = new MessagesViewModel(services.Chat);
         Settings = new SettingsViewModel(_navigation, services.Settings);
 
         MicPanel = new MicPanelViewModel(services.AudioDevice, services.VoiceSession, services.Settings);
         HeadphonePanel = new HeadphonePanelViewModel(services.AudioDevice, services.VoiceSession, services.Settings);
-        KeyboardPanel = new KeyboardPanelViewModel(services.AudioDevice);
 
         MinimizeCommand = new RelayCommand(() => Window?.Minimize());
         MaximizeCommand = new RelayCommand(() => Window?.ToggleMaximize());
         CloseCommand = new RelayCommand(() => Window?.Close());
         OpenSettingsCommand = new RelayCommand(() => _navigation.NavigateTo(Settings));
 
-        ShowGroupsCommand = new RelayCommand(() => GoToShell(Groups));
-        ShowFriendsCommand = new RelayCommand(() => GoToShell(Friends));
         ShowMessagesCommand = new RelayCommand(() => GoToShell(Messages));
 
+        // 页面内的标签切换不触发导航,标题栏那个私信按钮的选中态要跟着刷新
+        Messages.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(MessagesViewModel.Tab))
+            {
+                RefreshNavState();
+            }
+        };
+
         _navigation.Navigated += (_, _) => RefreshNavState();
-        _navigation.NavigateTo(Groups);
+
+        // 没域可开时回到私信页
+        Groups.ShowMessagesRequested += (_, _) => GoToShell(Messages);
+
+        // 启动:有域就进最上面那个域,一个都没有才停在私信页
+        Groups.OpenFirstGroup();
     }
 
     public GroupsViewModel Groups { get; }
-
-    public FriendsViewModel Friends { get; }
 
     public MessagesViewModel Messages { get; }
 
@@ -56,8 +63,6 @@ public sealed class MainWindowViewModel : ViewModelBase
     public MicPanelViewModel MicPanel { get; }
 
     public HeadphonePanelViewModel HeadphonePanel { get; }
-
-    public KeyboardPanelViewModel KeyboardPanel { get; }
 
     public object? CurrentPage => _navigation.Current;
 
@@ -97,14 +102,11 @@ public sealed class MainWindowViewModel : ViewModelBase
                 return;
             }
 
-            OnPropertyChanged(nameof(IsKeyboardPanelOpen));
             OnPropertyChanged(nameof(IsMicPanelOpen));
             OnPropertyChanged(nameof(IsHeadphonePanelOpen));
             OnPropertyChanged(nameof(IsAnyPanelOpen));
         }
     }
-
-    public bool IsKeyboardPanelOpen => _openPanel == TitlePanelKind.Keyboard;
 
     public bool IsMicPanelOpen => _openPanel == TitlePanelKind.Mic;
 
@@ -113,10 +115,10 @@ public sealed class MainWindowViewModel : ViewModelBase
     public bool IsAnyPanelOpen => _openPanel != TitlePanelKind.None;
 
     /// <summary>
-    /// 频道页与设置页是「左右分区」布局,左侧有一条竖向分隔线。
+    /// 频道页、设置页与消息页是「左右分区」布局,左侧有一条竖向分隔线。
     /// 标题栏那一段由 MainWindow 补画,这样竖线能从窗口顶部一直连到页面底部。
     /// </summary>
-    public bool ShowLeftDivider => _navigation.Current is RoomViewModel or SettingsViewModel;
+    public bool ShowLeftDivider => _navigation.Current is RoomViewModel or SettingsViewModel or MessagesViewModel;
 
     public void ShowPanel(TitlePanelKind panel) => OpenPanel = panel;
 
@@ -130,45 +132,38 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     public RelayCommand OpenSettingsCommand { get; }
 
-    public RelayCommand ShowGroupsCommand { get; }
-
-    public RelayCommand ShowFriendsCommand { get; }
-
     public RelayCommand ShowMessagesCommand { get; }
 
-    public bool IsGroupsActive { get; private set; }
+    public bool IsMessagesActive => _navigation.Current is MessagesViewModel { Tab: MessageTab.Private };
 
-    public bool IsFriendsActive { get; private set; }
-
-    public bool IsMessagesActive { get; private set; }
 
     /// <summary>
-    /// 从二级页面(群组内、设置)返回顶层页面时复用已有实例,避免重复压栈。
+    /// 从房间/设置回到顶层页面时复用已有实例,避免重复压栈。
     /// </summary>
     private void GoToShell(object target)
     {
-        if (_navigation.Current is RoomViewModel)
+        if (ReferenceEquals(_navigation.Current, target))
         {
-            _navigation.GoBack();
             return;
         }
 
-        if (!ReferenceEquals(_navigation.Current, target))
+        // 房间可以连着开好几个,只回退一次不保证回到顶层页面
+        if (_navigation.Current is RoomViewModel)
         {
-            _navigation.NavigateTo(target);
+            _navigation.GoBack();
+            if (ReferenceEquals(_navigation.Current, target))
+            {
+                return;
+            }
         }
+
+        _navigation.NavigateTo(target);
     }
 
     private void RefreshNavState()
     {
-        IsGroupsActive = _navigation.Current is GroupsViewModel or RoomViewModel;
-        IsFriendsActive = _navigation.Current is FriendsViewModel;
-        IsMessagesActive = _navigation.Current is MessagesViewModel;
-
         OnPropertyChanged(nameof(CurrentPage));
         OnPropertyChanged(nameof(ShowLeftDivider));
-        OnPropertyChanged(nameof(IsGroupsActive));
-        OnPropertyChanged(nameof(IsFriendsActive));
         OnPropertyChanged(nameof(IsMessagesActive));
     }
 }
@@ -177,7 +172,6 @@ public sealed class MainWindowViewModel : ViewModelBase
 public enum TitlePanelKind
 {
     None,
-    Keyboard,
     Mic,
     Headphone,
 }

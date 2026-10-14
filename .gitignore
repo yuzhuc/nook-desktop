@@ -6,6 +6,7 @@
 artifacts/
 publish/
 *.binlog
+.vs/
 
 # Visual Studio and other IDEs
 .idea/

@@ -15,11 +15,12 @@
     <Color x:Key="BorderSubtleColor">#1E1E1E</Color>
     <Color x:Key="BorderStrongColor">#3C3C3C</Color>
     <!--
-        分区竖线专用色。不能用 BorderSubtleColor：#1E1E1E 压在 #121212 背景上
-        只差 12 个色阶，1px 细线几乎看不见。分隔线要"刚好能看见但不发亮"，
-        所以单独给一档，比卡片边框略亮。
+        分区竖线专用色。Oopz 截图实测就是 #202020（只比底色 #121212 亮 14 个色阶），
+        再亮就会抢眼，所以照抄这个值。
     -->
-    <Color x:Key="DividerColor">#2E2E2E</Color>
+    <Color x:Key="DividerColor">#202020</Color>
+    <!-- 输入框描边：Oopz 实测 #2A2A2A，比卡片边框亮、比分隔线略亮 -->
+    <Color x:Key="BorderFieldColor">#2A2A2A</Color>
 
     <Color x:Key="TextPrimaryColor">#C8C8C8</Color>
     <Color x:Key="TextSecondaryColor">#9A9A9A</Color>
@@ -44,6 +45,7 @@
 
             <SolidColorBrush x:Key="BorderSubtleBrush" Color="{StaticResource BorderSubtleColor}" />
             <SolidColorBrush x:Key="BorderStrongBrush" Color="{StaticResource BorderStrongColor}" />
+            <SolidColorBrush x:Key="BorderFieldBrush" Color="{StaticResource BorderFieldColor}" />
             <SolidColorBrush x:Key="DividerBrush" Color="{StaticResource DividerColor}" />
 
             <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimaryColor}" />
@@ -67,6 +69,7 @@
 
             <SolidColorBrush x:Key="BorderSubtleBrush" Color="#E3E6ED" />
             <SolidColorBrush x:Key="BorderStrongBrush" Color="#C8CDD8" />
+            <SolidColorBrush x:Key="BorderFieldBrush" Color="#D5D9E2" />
             <SolidColorBrush x:Key="DividerBrush" Color="#D5D9E2" />
 
             <SolidColorBrush x:Key="TextPrimaryBrush" Color="#1A1C22" />

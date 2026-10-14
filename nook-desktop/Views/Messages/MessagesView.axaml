@@ -3,27 +3,302 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:nook_desktop.ViewModels.Messages"
+             xmlns:models="clr-namespace:nook_desktop.Models"
              mc:Ignorable="d"
              x:Class="nook_desktop.Views.Messages.MessagesView"
              x:DataType="vm:MessagesViewModel"
              d:DesignWidth="1180"
              d:DesignHeight="700">
-    <Grid RowDefinitions="Auto,*">
-        <StackPanel Grid.Row="0" Margin="20,18" Spacing="2">
-            <TextBlock Classes="h1" Text="消息" />
-            <TextBlock Classes="caption" Text="群组内的私信会显示在这里" />
-        </StackPanel>
+    <!--
+        两栏：左栏 240（私信 / 好友 两个标签页）| 右侧内容区。
+        左栏宽度必须与房间页的频道栏一致（240）：标题栏里补画的那段竖线是按
+        导航栏 64 + 240 对齐的（见 MainWindow.axaml 标题栏 ColumnDefinitions）。
+    -->
+    <Grid ColumnDefinitions="240,*">
 
-        <StackPanel Grid.Row="1"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Spacing="10">
-            <Path Classes="icon"
-                  Data="{StaticResource IconChat}"
-                  Width="28"
-                  Height="28"
-                  HorizontalAlignment="Center" />
-            <TextBlock Text="{Binding EmptyHint}" HorizontalAlignment="Center" />
-        </StackPanel>
+        <Border Grid.Column="0"
+                Background="{DynamicResource SurfaceRaisedBrush}"
+                BorderBrush="{DynamicResource DividerBrush}"
+                BorderThickness="0,0,1,0">
+            <Grid RowDefinitions="Auto,*">
+
+                <!-- 标签页：私信 / 好友 -->
+                <Border Grid.Row="0" Padding="0,8,12,26">
+                    <StackPanel Orientation="Horizontal" Spacing="18" VerticalAlignment="Center">
+                        <ToggleButton Classes="texttab" IsChecked="{Binding IsPrivateTab, Mode=TwoWay}">
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <TextBlock Classes="tablabel"
+                                           Classes.active="{Binding IsPrivateTab}"
+                                           Text="私信"
+                                           FontSize="20" />
+                                <Border Classes="badge"
+                                        IsVisible="{Binding HasUnread}"
+                                        VerticalAlignment="Top"
+                                        Margin="0,-2,0,0">
+                                    <TextBlock Text="{Binding UnreadCount}" Foreground="#FFFFFF" />
+                                </Border>
+                            </StackPanel>
+                        </ToggleButton>
+
+                        <ToggleButton Classes="texttab" IsChecked="{Binding IsFriendsTab, Mode=TwoWay}">
+                            <TextBlock Classes="tablabel"
+                                       Classes.active="{Binding IsFriendsTab}"
+                                       Text="好友"
+                                       FontSize="20" />
+                        </ToggleButton>
+                    </StackPanel>
+                </Border>
+
+                <!-- 私信：搜索 + 会话列表 -->
+                <Grid Grid.Row="1"
+                      IsVisible="{Binding IsPrivateTab}"
+                      RowDefinitions="Auto,*">
+                    <!-- 下划线搜索框:底线是输入框自己的,聚焦时底线会提亮 -->
+                    <Grid Grid.Row="0" Margin="0,0,10,10">
+                        <TextBox Classes="underline"
+                                 FontSize="15"
+                                 PlaceholderText="搜索" />
+                        <Path Classes="icon"
+                              Data="{StaticResource IconSearch}"
+                              Width="16"
+                              Height="16"
+                              HorizontalAlignment="Right"
+                              VerticalAlignment="Top"
+                              Margin="0,7,0,0"
+                              IsHitTestVisible="False" />
+                    </Grid>
+
+                    <ScrollViewer Grid.Row="1" Padding="6,0,10,10">
+                        <ItemsControl ItemsSource="{Binding Conversations}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="models:Conversation">
+                                    <Button Classes="listitem"
+                                            Margin="0,0,0,2"
+                                            Classes.activerow="{Binding IsSelected}"
+                                            CommandParameter="{Binding}">
+                                        <Grid ColumnDefinitions="Auto,*,Auto">
+                                            <Border Grid.Column="0"
+                                                    Width="30"
+                                                    Height="30"
+                                                    CornerRadius="15"
+                                                    Background="{DynamicResource AccentBrush}"
+                                                    VerticalAlignment="Center">
+                                                <Path Classes="icon"
+                                                      Data="{StaticResource IconBell}"
+                                                      Width="16"
+                                                      Height="16"
+                                                      Stroke="#FFFFFF"
+                                                      HorizontalAlignment="Center"
+                                                      VerticalAlignment="Center" />
+                                            </Border>
+                                            <TextBlock Grid.Column="1"
+                                                       Text="{Binding Name}"
+                                                       Margin="10,0,0,0"
+                                                       FontSize="15"
+                                                       VerticalAlignment="Center" />
+                                            <Border Grid.Column="2"
+                                                    Classes="badge"
+                                                    IsVisible="{Binding HasUnread}"
+                                                    Margin="8,0,0,0">
+                                                <TextBlock Text="{Binding UnreadCount}" Foreground="#FFFFFF" />
+                                            </Border>
+                                        </Grid>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+
+                <!-- 好友：筛选 + 搜索 + 空状态 -->
+                <Grid Grid.Row="1"
+                      IsVisible="{Binding IsFriendsTab}"
+                      RowDefinitions="Auto,Auto,*">
+                    <Grid Grid.Row="0" Margin="0,0,12,10">
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="18"
+                                    VerticalAlignment="Center">
+                        <ToggleButton Classes="texttab" IsChecked="{Binding IsOnlineSelected, Mode=TwoWay}">
+                            <TextBlock Classes="tablabel"
+                                       Classes.active="{Binding IsOnlineSelected}"
+                                       Text="在线"
+                                       FontSize="14" />
+                        </ToggleButton>
+                        <ToggleButton Classes="texttab" IsChecked="{Binding IsAllSelected, Mode=TwoWay}">
+                            <TextBlock Classes="tablabel"
+                                       Classes.active="{Binding IsAllSelected}"
+                                       Text="全部"
+                                       FontSize="14" />
+                        </ToggleButton>
+                        <ToggleButton Classes="texttab" IsChecked="{Binding IsRequestsSelected, Mode=TwoWay}">
+                            <TextBlock Classes="tablabel"
+                                       Classes.active="{Binding IsRequestsSelected}"
+                                       Text="请求"
+                                       FontSize="14" />
+                        </ToggleButton>
+                        <ToggleButton Classes="texttab" IsChecked="{Binding IsBlockedSelected, Mode=TwoWay}">
+                            <TextBlock Classes="tablabel"
+                                       Classes.active="{Binding IsBlockedSelected}"
+                                       Text="黑名单"
+                                       FontSize="14" />
+                        </ToggleButton>
+                        </StackPanel>
+
+                        <!-- 加好友还没接后端,先放个禁用占位 -->
+                        <Button Classes="icon"
+                                Width="24" Height="24" MinHeight="24"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                IsEnabled="False"
+                                ToolTip.Tip="添加好友">
+                            <Path Classes="icon" Data="{StaticResource IconPersonPlus}" Width="16" Height="16" />
+                        </Button>
+                    </Grid>
+
+                    <!-- 下划线搜索框,和私信页一致 -->
+                    <Grid Grid.Row="1" Margin="0,0,10,10">
+                        <TextBox Classes="underline"
+                                 FontSize="15"
+                                 PlaceholderText="搜索好友" />
+                        <Path Classes="icon"
+                              Data="{StaticResource IconSearch}"
+                              Width="16"
+                              Height="16"
+                              HorizontalAlignment="Right"
+                              VerticalAlignment="Top"
+                              Margin="0,7,0,0"
+                              IsHitTestVisible="False" />
+                    </Grid>
+
+                    <StackPanel Grid.Row="2"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Margin="0,0,0,44"
+                                Spacing="12">
+                        <Path Classes="icon"
+                              Data="{StaticResource IconPerson}"
+                              Width="68"
+                              Height="68"
+                              Stroke="{DynamicResource TextMutedBrush}"
+                              HorizontalAlignment="Center" />
+                        <TextBlock Classes="caption"
+                                   Text="{Binding FriendEmptyHint}"
+                                   HorizontalAlignment="Center" />
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <!-- 右侧内容区 -->
+        <Grid Grid.Column="1">
+
+            <!-- 没选会话时的空状态 -->
+            <StackPanel IsVisible="{Binding !HasSelectedConversation}"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Margin="0,160,0,0"
+                        Spacing="50">
+                <Path Classes="icon"
+                      Data="{StaticResource IconMail}"
+                      Width="104"
+                      Height="104"
+                      Stroke="{DynamicResource TextMutedBrush}"
+                      HorizontalAlignment="Center" />
+                <TextBlock Text="当前没有私信，快去找他们来玩!"
+                           Foreground="{DynamicResource TextMutedBrush}"
+                           HorizontalAlignment="Center" />
+            </StackPanel>
+
+            <!-- 选中会话后的聊天区 -->
+            <Grid IsVisible="{Binding HasSelectedConversation}"
+                  RowDefinitions="Auto,*,Auto">
+                <Border Grid.Row="0"
+                        Padding="20,14"
+                        BorderBrush="{DynamicResource BorderSubtleBrush}"
+                        BorderThickness="0,0,0,1">
+                    <TextBlock Classes="h2" Text="{Binding SelectedConversation.Name}" />
+                </Border>
+
+                <!-- 系统通知:只读公告卡片流,结构对齐 Oopz 的通知页 -->
+                <ScrollViewer Grid.Row="1"
+                              Padding="20,16"
+                              IsVisible="{Binding IsSystemNotice}">
+                    <ItemsControl ItemsSource="{Binding Messages}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="models:ChatMessage">
+                                <Grid ColumnDefinitions="Auto,*" Margin="0,0,0,18">
+                                    <Border Grid.Column="0"
+                                            Width="28"
+                                            Height="28"
+                                            CornerRadius="8"
+                                            Margin="0,18,0,0"
+                                            VerticalAlignment="Top"
+                                            Background="{DynamicResource AccentBrush}">
+                                        <Path Classes="icon"
+                                              Data="{StaticResource IconChat}"
+                                              Width="16"
+                                              Height="16"
+                                              Stroke="#FFFFFF"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                                    </Border>
+
+                                    <StackPanel Grid.Column="1" Margin="12,0,0,0" Spacing="6">
+                                        <TextBlock Classes="caption" Text="{Binding SentAt}" />
+                                        <Border Classes="panel" Padding="16,14">
+                                            <TextBlock Text="{Binding Content}" TextWrapping="Wrap" />
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <ScrollViewer Grid.Row="1"
+                              Padding="20,16"
+                              IsVisible="{Binding !IsSystemNotice}">
+                    <ItemsControl ItemsSource="{Binding Messages}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="models:ChatMessage">
+                                <StackPanel Margin="0,0,0,12" Spacing="2">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <TextBlock Text="{Binding AuthorName}" FontWeight="SemiBold" FontSize="13" />
+                                        <TextBlock Classes="caption" Text="{Binding SentAt}" />
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding Content}" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <Grid Grid.Row="2"
+                      Margin="20,12,20,16"
+                      ColumnDefinitions="*,Auto"
+                      IsVisible="{Binding !IsSystemNotice}">
+                    <TextBox Grid.Column="0"
+                             MinHeight="40"
+                             MaxHeight="120"
+                             AcceptsReturn="True"
+                             TextWrapping="Wrap"
+                             VerticalContentAlignment="Center"
+                             Text="{Binding InputText}"
+                             PlaceholderText="发送消息..." />
+                    <Button Grid.Column="1"
+                            Margin="10,0,0,0"
+                            Classes="primary"
+                            VerticalAlignment="Stretch"
+                            Command="{Binding SendMessageCommand}"
+                            ToolTip.Tip="发送">
+                        <Path Classes="icon"
+                              Data="{StaticResource IconSend}"
+                              Stroke="#FFFFFF"
+                              Width="16"
+                              Height="16" />
+                    </Button>
+                </Grid>
+            </Grid>
+        </Grid>
     </Grid>
 </UserControl>

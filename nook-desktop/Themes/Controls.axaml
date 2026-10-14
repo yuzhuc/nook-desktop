@@ -1,5 +1,19 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--
+        可点击控件统一手型光标。
+        写在 Styles 里(不是控件模板):Styles 的优先级高于 ControlTheme,
+        这样不管模板里怎么设,鼠标移到按钮上都是「手型」而不是箭头。
+    -->
+    <Style Selector="Button">
+        <Setter Property="Cursor" Value="Hand" />
+    </Style>
+
+    <Style Selector="ToggleButton">
+        <Setter Property="Cursor" Value="Hand" />
+    </Style>
+
+
     <!-- 文本层级 -->
     <Style Selector="TextBlock">
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
@@ -70,8 +84,9 @@
         <Setter Property="Background" Value="{DynamicResource SurfaceHoverBrush}" />
     </Style>
 
+    <!-- 左栏选中态:灰底 + 白图标,不用主色底 -->
     <Style Selector="Button.icon.activenav /template/ ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+        <Setter Property="Background" Value="{DynamicResource SurfaceHoverBrush}" />
     </Style>
 
     <Style Selector="Button.icon.activenav Path.icon">
@@ -124,6 +139,7 @@
         <Setter Property="Background" Value="Transparent" />
     </Style>
 
+    <!-- 悬停时图标提亮(外壳按钮的原有反馈) -->
     <Style Selector="Button.captionbutton:pointerover Path.icon">
         <Setter Property="Stroke" Value="{DynamicResource TextHoverBrush}" />
     </Style>
@@ -132,9 +148,17 @@
         <Setter Property="Stroke" Value="{DynamicResource TextHoverBrush}" />
     </Style>
 
-    <!-- 最小化那条线是 Border,提亮走 Background,与图标用同一个悬停色 -->
     <Style Selector="Button.captionbutton:pointerover Border.minimize">
         <Setter Property="Background" Value="{DynamicResource TextHoverBrush}" />
+    </Style>
+
+    <!-- 按下不要底色变化(否则点一下会闪一下) -->
+    <Style Selector="Button.captionbutton:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+    <Style Selector="Button.titlebutton:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent" />
     </Style>
 
 
@@ -142,7 +166,7 @@
     <Style Selector="TextBox">
         <Setter Property="Background" Value="{DynamicResource SurfaceRaisedBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource BorderSubtleBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderFieldBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="8" />
         <Setter Property="Padding" Value="12,9" />
@@ -153,6 +177,73 @@
     <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
         <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
     </Style>
+
+    <!--
+        标题栏搜索框:胶囊形 + 比标题栏亮一档的底色,才看得出是个「气泡」。
+        高度 28 / 半径 14 是 Oopz 截图实测值,照抄就是正胶囊。
+        边框跟底色同色(平时看不见),聚焦时由上面那条规则换成主色,保留焦点提示。
+        左边 36 的内边距是给内嵌的放大镜图标让位。
+    -->
+    <Style Selector="TextBox.searchbox">
+        <Setter Property="Background" Value="{DynamicResource SurfaceHoverBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource SurfaceHoverBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="14" />
+        <Setter Property="Height" Value="28" />
+        <Setter Property="MinHeight" Value="28" />
+        <Setter Property="Padding" Value="36,0,14,0" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+
+
+    <!--
+        左栏底部「添加域」:常态灰圆盘 + 深色加号,鼠标移上去圆盘变亮(近白)。
+        底色写在模板的 ContentPresenter 上:本地 Background 会压过样式,所以不能写在内联属性里。
+    -->
+    <Style Selector="Button.addgroup">
+        <Setter Property="Width" Value="22" />
+        <Setter Property="Height" Value="22" />
+        <Setter Property="MinHeight" Value="22" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="CornerRadius" Value="11" />
+    </Style>
+
+    <Style Selector="Button.addgroup /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource TextSecondaryBrush}" />
+        <Setter Property="CornerRadius" Value="11" />
+    </Style>
+
+    <Style Selector="Button.addgroup:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource TextHoverBrush}" />
+    </Style>
+
+    <Style Selector="Button.addgroup:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource TextSecondaryBrush}" />
+    </Style>
+
+    <!--
+        弹窗浮层:淡入 + 卡片轻微放大(弹出感)。
+        浮层一直留在可视树里(只切成透明+禁用),这样打开时属性才会"变化"、过渡才会跑;
+        关闭时必须同时退出命中测试:IsEnabled 只挡输入事件,指针命中(光标、悬停)照样算在这层上,
+        少了 IsHitTestVisible 整个窗口的光标和悬停都会指向这层空浮层。
+    -->
+    <Style Selector="Panel.dialogoverlay">
+        <Setter Property="Opacity" Value="0" />
+        <Setter Property="IsEnabled" Value="False" />
+        <Setter Property="IsHitTestVisible" Value="False" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <DoubleTransition Property="Opacity" Duration="0:0:0.16" />
+            </Transitions>
+        </Setter>
+    </Style>
+
+    <Style Selector="Panel.dialogoverlay.open">
+        <Setter Property="Opacity" Value="1" />
+        <Setter Property="IsEnabled" Value="True" />
+        <Setter Property="IsHitTestVisible" Value="True" />
+    </Style>
+
 
     <!-- 列表项:频道列表等 -->
     <Style Selector="Button.listitem">
@@ -248,5 +339,380 @@
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="10" />
         <Setter Property="Padding" Value="16" />
+    </Style>
+    <!-- 未读数角标:红色圆底,里面是数字 -->
+    <Style Selector="Border.badge">
+        <Setter Property="Background" Value="{DynamicResource DangerBrush}" />
+        <Setter Property="CornerRadius" Value="999" />
+        <Setter Property="MinWidth" Value="16" />
+        <Setter Property="Height" Value="16" />
+        <Setter Property="Padding" Value="5,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!--
+        纯文字标签页(私信 / 好友、在线 / 全部 ...)。
+        选中态只改文字颜色与字重,不加底色。
+        底色压不掉是因为 Fluent 的 ToggleButton 把高亮画在 ContentPresenter 上,
+        只设按钮自己的 Background 没用(和 captionbutton 同一个坑)。
+        文字颜色写在标签自己的样式类上:Fluent 会在选中态换掉 Foreground,
+        而文件顶部那条 TextBlock 全局规则又会盖住继承下来的颜色。
+    -->
+    <Style Selector="ToggleButton.texttab">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
+    </Style>
+
+    <Style Selector="ToggleButton.texttab /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+    <Style Selector="ToggleButton.texttab:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+    <Style Selector="ToggleButton.texttab:checked /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+    <Style Selector="TextBlock.tablabel">
+        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+    </Style>
+
+    <Style Selector="TextBlock.tablabel.active">
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+
+    <!-- 聊天输入条:底色画在外层气泡上,输入框自身透明无描边 -->
+    <Style Selector="TextBox.chatinput">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+
+    <!--
+        悬停 / 聚焦都不要 Fluent 自己在输入框里画底色 —— 否则只有输入框那一块变亮,
+        看起来像「变色不完全」。底色变化由外层包边统一负责。
+    -->
+    <!--
+        浮层关闭时会整体禁用,这里让输入框在禁用态看起来和正常一样 ——
+        否则 Fluent 会把它涂灰一块,和外面那层气泡变成两个颜色。
+    -->
+    <Style Selector="TextBox.chatinput:disabled">
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        <Setter Property="PlaceholderForeground" Value="{DynamicResource TextSecondaryBrush}" />
+    </Style>
+
+    <Style Selector="TextBox.chatinput:disabled /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+    </Style>
+
+    <Style Selector="TextBox.chatinput:pointerover /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+    </Style>
+
+    <Style Selector="TextBox.chatinput:focus /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+    </Style>
+
+    <!--
+        频道行选中态:高亮块由 RoomView 里那个会滑动的元素画,行自己不铺底色,
+        只把字和图标提亮;hover 也压掉,免得盖住高亮块。
+    -->
+    <Style Selector="Button.listitem.selected /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+    <Style Selector="Button.listitem.selected:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+    <Style Selector="Button.listitem.selected TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource TextHoverBrush}" />
+    </Style>
+
+    <Style Selector="Button.listitem.selected Path.icon">
+        <Setter Property="Stroke" Value="{DynamicResource TextHoverBrush}" />
+    </Style>
+
+    <!--
+        私信会话的选中态:整行底色高亮(Oopz 是这一块灰底,不是频道栏那种滑动块)。
+        hover 也保持高亮色,免得鼠标一飘过去反而变暗。
+    -->
+    <Style Selector="Button.activerow /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource BorderFieldBrush}" />
+    </Style>
+
+    <Style Selector="Button.activerow:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource BorderFieldBrush}" />
+    </Style>
+
+
+    <!--
+        标题栏气泡:整块底色跟着悬停提亮一档。
+        默认跟标题栏同色,只有包边露出来;指针落在里面的图标按钮上也算悬停(已实测)。
+    -->
+    <Style Selector="Border.hoverbubble">
+        <Setter Property="Background" Value="{DynamicResource SurfaceBaseBrush}" />
+    </Style>
+
+    <Style Selector="Border.hoverbubble:pointerover">
+        <Setter Property="Background" Value="{DynamicResource SurfaceHoverBrush}" />
+    </Style>
+
+    <!-- 选中态(菜单里用过):这里不再给气泡用,保留规则以免其它地方引用出问题 -->
+    <Style Selector="Border.hoverbubble.selected">
+        <Setter Property="Background" Value="{DynamicResource BorderFieldBrush}" />
+    </Style>
+
+    <!-- ID 胶囊:OOPZ 实测底色 #36373B,悬浮再亮一档 -->
+    <Style Selector="Border.idpill">
+        <Setter Property="Background" Value="#36373B" />
+    </Style>
+
+    <!-- 域菜单项:整行可点,悬浮提亮(功能还没接,先只做点击反馈) -->
+    <Style Selector="Button.menuitem">
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Padding" Value="10,9" />
+        <Setter Property="MinHeight" Value="0" />
+    </Style>
+
+    <Style Selector="Button.menuitem /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="CornerRadius" Value="6" />
+    </Style>
+
+    <Style Selector="Button.menuitem:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource SurfaceHoverBrush}" />
+    </Style>
+    <!--
+        输入条:常态贴中栏底部单行;展开时铺满整个聊天区并随窗口自适应。
+        展开态照 Oopz 实测:顶部一条 1px 亮线 + 左上 #1E1E1E 到右下 #121212 的对角渐变,
+        工具条 5 个(粗体/删除线/斜体/下划线/旗),底部只剩表情和回车。
+    -->
+    <Style Selector="Grid.composer">
+        <Setter Property="Grid.Row" Value="2" />
+        <Setter Property="VerticalAlignment" Value="Bottom" />
+        <Setter Property="Margin" Value="11,0,10,10" />
+    </Style>
+
+    <Style Selector="Grid.composer.expanded">
+        <Setter Property="Grid.Row" Value="1" />
+        <Setter Property="Grid.RowSpan" Value="2" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="Margin" Value="0" />
+    </Style>
+
+    <Style Selector="Border.composerpanel">
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderFieldBrush}" />
+        <Setter Property="BorderThickness" Value="0,1,0,0" />
+        <Setter Property="CornerRadius" Value="6,6,0,0" />
+        <Setter Property="Background">
+            <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                <GradientStop Offset="0" Color="#1E1E1E" />
+                <GradientStop Offset="1" Color="#121212" />
+            </LinearGradientBrush>
+        </Setter>
+    </Style>
+
+    <!-- 展开态工具条的 B/S/I/U/旗:每个 12 宽、间隔 16,字高照 Oopz 实测 14px -->
+    <Style Selector="Grid.richtools">
+        <Setter Property="Margin" Value="16,5,17,0" />
+    </Style>
+
+    <Style Selector="TextBlock.richtool">
+        <Setter Property="Width" Value="12" />
+        <Setter Property="FontSize" Value="19" />
+        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+        <Setter Property="TextAlignment" Value="Center" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <Style Selector="StackPanel.composericons">
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Margin" Value="7,0,0,0" />
+    </Style>
+
+    <Style Selector="StackPanel.composericons.expanded">
+        <Setter Property="VerticalAlignment" Value="Bottom" />
+        <Setter Property="Margin" Value="0,0,17,15" />
+        <Setter Property="Spacing" Value="18" />
+    </Style>
+
+    <!-- 展开态工具条 B/S/I/U/旗:做成按钮,悬浮只提亮图标(Oopz 就这样,没有文字气泡) -->
+    <Style Selector="Button.richtool">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="Width" Value="12" />
+        <Setter Property="Height" Value="16" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <Style Selector="Button.richtool:pointerover TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource TextHoverBrush}" />
+    </Style>
+
+    <Style Selector="Button.richtool:pointerover Path">
+        <Setter Property="Stroke" Value="{DynamicResource TextHoverBrush}" />
+    </Style>
+
+
+    <!--
+        输入条上 ✂ / ⊕ 的悬浮面板(照 Oopz 实测:180 宽、#202020、圆角 4,浮在小图标上方 19px)。
+        只做样子,点了不做事。
+    -->
+    <Style Selector="Border.hoverpanel">
+        <Setter Property="Background" Value="#202020" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="Width" Value="180" />
+    </Style>
+
+    <Style Selector="Button.panelrow">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Padding" Value="13,0,16,0" />
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="Height" Value="48" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    </Style>
+
+    <Style Selector="Button.panelrow /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="CornerRadius" Value="4" />
+    </Style>
+
+    <Style Selector="Button.panelrow:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource SurfaceHoverBrush}" />
+    </Style>
+    <!-- 选中 / 聚焦态:包边提亮,不是蓝色焦点框 -->
+    <Style Selector="Border.rim">
+        <Setter Property="BorderBrush" Value="{DynamicResource TextMutedBrush}" />
+    </Style>
+
+    <!--
+        下划线输入框(私信页那种):没有边框和底色,只有一条底线;
+        聚焦时底线自己提亮,不是蓝色,也不会多出一圈框。
+    -->
+    <Style Selector="TextBox.underline">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Padding" Value="1,4,0,9" />
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+
+    <!--
+        模板里的那层 Border 不吃 TextBox.BorderThickness,得直接改它:
+        只留下边一条线,其余三边厚度归零。
+    -->
+    <!-- 成员栏那个搜索框:自己不画边框/底色(底下那条线由外层 Border 画,照 Oopz 横跨整栏) -->
+    <Style Selector="TextBox.bare">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="CornerRadius" Value="0" />
+    </Style>
+
+    <Style Selector="TextBox.bare /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+    </Style>
+
+
+    <Style Selector="TextBox.underline /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0,0,0,1" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderStrongBrush}" />
+        <Setter Property="CornerRadius" Value="0" />
+    </Style>
+
+    <Style Selector="TextBox.underline:pointerover /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderStrongBrush}" />
+    </Style>
+
+    <!-- 选中(聚焦)时底线提亮 -->
+    <Style Selector="TextBox.underline:focus /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{DynamicResource TextPrimaryBrush}" />
+    </Style>
+
+    <!--
+        聊天输入框尺寸:常态单行 36 高;展开态铺满面板,并把文字压到 Oopz 的位置。
+        这两条必须排在 TextBox.underline 之后:同样命中时后定义的赢,放前面会被底线那条盖掉。
+    -->
+    <Style Selector="TextBox.composerinput">
+        <Setter Property="MaxHeight" Value="36" />
+    </Style>
+
+    <Style Selector="TextBox.composerinput.expanded">
+        <Setter Property="MaxHeight" Value="100000" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="Padding" Value="13,21,13,0" />
+    </Style>
+
+    <!-- 展开态:编辑区铺满,不要再留那条底线 -->
+    <Style Selector="TextBox.underline.expanded /template/ Border#PART_BorderElement">
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+    <!-- 搜索窗口里的输入框:比弹窗底色更亮一条,外面一圈亮描边 -->
+    <Style Selector="Border.searchfield">
+        <Setter Property="Background" Value="{DynamicResource BorderFieldBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderStrongBrush}" />
+    </Style>
+
+    <Style Selector="Border.searchfield.hover">
+        <Setter Property="Background" Value="{DynamicResource BorderStrongBrush}" />
+    </Style>
+
+    <!-- 选中(聚焦)时底色固定,鼠标再移也不变,只有包边更亮 -->
+    <Style Selector="Border.searchfield.rim">
+        <Setter Property="Background" Value="{DynamicResource BorderStrongBrush}" />
+    </Style>
+
+    <!-- 气泡里的按钮:按下不要缩放反馈(Fluent 模板自带按下缩放动画,这里按掉) -->
+    <Style Selector="Button.bubbleicon">
+        <Setter Property="Transitions" Value="{x:Null}" />
+        <Setter Property="RenderTransform" Value="{x:Null}" />
+    </Style>
+
+    <!-- 圆气泡里的按钮:提亮交给外层气泡,按钮自己不再画一层高亮 -->
+    <Style Selector="Button.bubbleicon:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+    <Style Selector="Button.bubbleicon:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+    <!-- 键盘焦点也不要蓝框(选中态由气泡自身表示) -->
+    <Style Selector="Button.bubbleicon:focus /template/ ContentPresenter">
+        <Setter Property="BorderBrush" Value="Transparent" />
+    </Style>
+
+    <Style Selector="Button.bubbleicon:focus-visible /template/ ContentPresenter">
+        <Setter Property="BorderBrush" Value="Transparent" />
+    </Style>
+
+
+    <!-- 气泡里的按钮选中时也只留白色图标:底色由气泡自己扛 -->
+    <Style Selector="Button.bubbleicon.activenav /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent" />
     </Style>
 </Styles>

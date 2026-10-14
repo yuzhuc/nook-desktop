@@ -3,20 +3,54 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:nook_desktop.ViewModels"
+        xmlns:groups="clr-namespace:nook_desktop.ViewModels.Groups"
         mc:Ignorable="d"
         x:Class="nook_desktop.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         d:DesignWidth="1180"
         d:DesignHeight="740"
         Title="nook"
-        Width="1180"
-        Height="740"
+        Width="972"
+        Height="565"
         MinWidth="972"
         MinHeight="565"
         CanResize="True"
         WindowDecorations="None"
         Background="{DynamicResource SurfaceBaseBrush}"
         WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <!-- 域栏一行:图标 42 居中,第 0/2 列吸收左边多出来的 8px -->
+        <DataTemplate x:Key="GroupRow" DataType="groups:GroupCardViewModel">
+            <Grid ColumnDefinitions="22,42,14">
+                <Button Grid.Column="1"
+                        Width="42"
+                        Height="42"
+                        Padding="0"
+                        Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).Groups.JoinGroupCommand}"
+                        CommandParameter="{Binding}"
+                        PointerPressed="OnGroupItemPointerPressed"
+                        PointerEntered="OnGroupItemPointerEntered"
+                        PointerExited="OnGroupItemPointerExited">
+                    <Border Width="42"
+                            Height="42"
+                            CornerRadius="14"
+                            Background="{Binding AccentBrush}">
+                        <TextBlock Text="{Binding Name[0]}"
+                                   FontSize="15"
+                                   FontWeight="SemiBold"
+                                   Foreground="#FFFFFF"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+                    </Border>
+                </Button>
+            </Grid>
+        </DataTemplate>
+
+        <ItemsPanelTemplate x:Key="GroupRowPanel">
+            <StackPanel Orientation="Vertical" Spacing="12" HorizontalAlignment="Stretch" />
+        </ItemsPanelTemplate>
+    </Window.Resources>
 
     <!--
         单层根 Grid：子元素按顺序叠放，后写的盖在上面。
@@ -34,6 +68,11 @@
             BorderBrush="#303030"
             BorderThickness="1">
     <Grid>
+        <!-- 只用来接焦点的空元素:点空白处把焦点收到它身上,输入框的选中态才不会赖着不走 -->
+        <Border x:Name="BlankFocus"
+                Focusable="True"
+                IsTabStop="False"
+                IsHitTestVisible="False" />
 
         <!--
             56 = 顶部边距 8 + 标题栏 48。
@@ -65,7 +104,7 @@
                     另外左栏内容本身约需 264px（logo 80 + 间距 18 + 三个图标 114 + 头像 38 + 边距 14），
                     列宽若小于约 280 会溢出并压到中栏的消息图标上。
                 -->
-                <Grid ColumnDefinitions="304,*,236">
+                <Grid ColumnDefinitions="310,*,236">
 
                     <!--
                         左栏内部再分两小栏：logo 贴最左，气泡+头像组靠分隔线。
@@ -91,34 +130,22 @@
                                     VerticalAlignment="Center"
                                     Spacing="6">
                         <!--
-                            设备图标气泡：键盘 / 话筒 / 耳机。
-                            胶囊形：圆角取高度的一半(15)，两端就是半圆。
-                            高度和头像一致(30px),底色 SurfaceHoverBrush(#1E1E1E),外圈包边 #303030(比底色亮才看得见)。
+                            设备图标气泡：话筒 / 耳机。
+                            外高 30 = 内容 28 + 上下各 1px 描边,描边色和头像气泡一致。
                         -->
-                        <Border Background="{DynamicResource SurfaceHoverBrush}"
-                                BorderBrush="#303030"
+                        <Border x:Name="DeviceBubble"
+                                Classes="hoverbubble"
+                                BorderBrush="{DynamicResource BorderStrongBrush}"
                                 BorderThickness="1"
                                 CornerRadius="15"
                                 Height="30"
-                                Padding="12,0"
+                                Padding="11,0"
                                 VerticalAlignment="Center">
                             <StackPanel Orientation="Horizontal" Spacing="6">
-                                <Button x:Name="KeyboardButton"
-                                        Classes="devicon"
-                                        Height="28" MinHeight="0" Padding="0"
-                                        PointerEntered="OnDeviceIconPointerEntered"
-                                        PointerExited="OnDeviceIconPointerExited">
-                                    <Canvas Width="28" Height="28">
-                                        <Path Classes="icon"
-                                              Data="{StaticResource IconKeyboard}"
-                                              Width="20" Height="20"
-                                              Stretch="Uniform"
-                                              Canvas.Left="4" Canvas.Top="7" />
-                                    </Canvas>
-                                </Button>
 
                                 <Button x:Name="MicButton"
-                                        Classes="devicon"
+                                        Classes="devicon bubbleicon"
+                                        FocusAdorner="{x:Null}"
                                         Height="28" MinHeight="0" Padding="0"
                                         PointerEntered="OnDeviceIconPointerEntered"
                                         PointerExited="OnDeviceIconPointerExited">
@@ -132,7 +159,8 @@
                                 </Button>
 
                                 <Button x:Name="HeadphoneButton"
-                                        Classes="devicon"
+                                        Classes="devicon bubbleicon"
+                                        FocusAdorner="{x:Null}"
                                         Height="28" MinHeight="0" Padding="0"
                                         PointerEntered="OnDeviceIconPointerEntered"
                                         PointerExited="OnDeviceIconPointerExited">
@@ -148,7 +176,7 @@
                         </Border>
 
                         <!-- 头像：右下角为手动设置的状态点 -->
-                        <Panel Margin="8,0,0,0"
+                        <Panel Margin="5,0,0,0"
                               VerticalAlignment="Center">
                             <Border Width="30"
                                     Height="30"
@@ -198,17 +226,63 @@
                                 HorizontalAlignment="Left"
                                 Margin="8,0,0,0"
                                 VerticalAlignment="Center"
-                                Spacing="10">
-                        <Button x:Name="MessagesButton"
-                                Classes="icon"
-                                Command="{Binding ShowMessagesCommand}">
-                            <Path Classes="icon" Data="{StaticResource IconChat}" />
-                        </Button>
+                                Spacing="5">
+                        <!--
+                            私信图标:和左侧设备气泡同一套(高 30、圆角 15、1px 描边),
+                            宽度由内边距撑出来,只有一个图标所以看着接近圆形。
+                        -->
+                        <Border x:Name="MessagesBubble"
+                                Classes="hoverbubble"
+                                BorderBrush="{DynamicResource BorderStrongBrush}"
+                                BorderThickness="1"
+                                Height="30"
+                                Padding="3,0"
+                                CornerRadius="15"
+                                VerticalAlignment="Center">
+                            <Button x:Name="MessagesButton"
+                                    Classes="icon devicon bubbleicon"
+                                    FocusAdorner="{x:Null}"
+                                    Classes.activenav="{Binding IsMessagesActive}"
+                                    Command="{Binding ShowMessagesCommand}">
+                                <Panel>
+                                    <Path Classes="icon" Data="{StaticResource IconChat}" Width="18" Height="18" />
+                                    <Border Classes="badge"
+                                            IsVisible="{Binding Messages.HasUnread}"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Top"
+                                            Margin="0,-3,-6,0">
+                                        <TextBlock Text="{Binding Messages.UnreadCount}" Foreground="#FFFFFF" />
+                                    </Border>
+                                </Panel>
+                            </Button>
+                        </Border>
 
-                        <TextBox Width="260"
-                                 VerticalAlignment="Center"
-                                 Text="{Binding Groups.SearchText, Mode=TwoWay}"
-                                 PlaceholderText="搜索" />
+                        <!--
+                            搜索入口:和私信气泡同一套 —— 外层 Border 管底色 / 描边 / 悬停提亮,
+                            里面的按钮无背景也无 Fluent 高亮,点了弹搜索窗口。
+                        -->
+                        <Border x:Name="SearchBubble"
+                                Classes="hoverbubble"
+                                Width="200"
+                                Height="30"
+                                CornerRadius="15"
+                                BorderBrush="{DynamicResource BorderStrongBrush}"
+                                BorderThickness="1"
+                                VerticalAlignment="Center">
+                            <Button Classes="bubbleicon"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    FocusAdorner="{x:Null}"
+                                    Padding="12,0"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Left"
+                                    Command="{Binding Groups.OpenSearchCommand}">
+                                <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                    <Path Classes="icon" Data="{StaticResource IconSearch}" Width="16" Height="16" />
+                                    <TextBlock Classes="caption" Text="搜索" />
+                                </StackPanel>
+                            </Button>
+                        </Border>
                     </StackPanel>
 
                     <!--
@@ -263,19 +337,105 @@
             <Grid Grid.Row="1"
                   ColumnDefinitions="Auto,*"
                   Margin="8,0,8,0">
+                <Grid.Effect>
+                    <!--
+                        弹窗打开时把后面的内容整体模糊(标题栏保持清晰)。
+                        真正的「只模糊对话框底下的区域」需要合成器级别的背景模糊,
+                        无边框窗口这边拿不到,所以用整块内容模糊代替。
+                    -->
+                    <BlurEffect Radius="{Binding Groups.OverlayBlurRadius}" />
+                </Grid.Effect>
 
+                <!-- 底边内缩 8 + 右下圆角:底部「+」的位置和参考图一致 -->
                 <Border Grid.Column="0"
-                        Width="64"
+                        Width="70"
+                        Margin="0,0,0,8"
+                        CornerRadius="0,0,16,0"
                         Background="{DynamicResource SurfaceRaisedBrush}">
-                    <StackPanel Margin="0,10,0,0"
-                                Spacing="6"
-                                HorizontalAlignment="Center">
-                        <Button Classes="icon"
-                                Classes.activenav="{Binding IsGroupsActive}"
-                                Command="{Binding ShowGroupsCommand}">
-                            <Path Classes="icon" Data="{StaticResource IconHash}" />
+                    <Grid RowDefinitions="*,Auto">
+                        <!--
+                            频道竖排在左栏,多了这一列可以滚动;「添加群组」固定在底部。
+                            以前这里只有一个「群组」按钮,点开是「全部频道」卡片页;那页已删。
+                            格子里放频道名首字,和房间页成员栏的头像占位同一套做法 ——
+                            清一色 # 图标只能靠颜色区分。
+                        -->
+                        <!--
+                            左边距 -8:滚动区伸到窗口左边缘,选中竖线才能贴着边画。
+                            多出来的 8px 被列表项的固定列吸收,头像位置和以前一样。
+                        -->
+                        <ScrollViewer Grid.Row="0"
+                                      Margin="-8,10,0,0"
+                                      VerticalScrollBarVisibility="Hidden">
+                            <Panel>
+                                <!--
+                                    置顶组贴着上面(从上往下排,最新置顶的在最上),普通组贴着下面(紧挨 + 往上叠);
+                                    中间那行吃掉剩余空间:两组一共超过一屏时它塌成 0,整块当一个列表滚。
+                                -->
+                                <Grid RowDefinitions="Auto,Auto,*,Auto">
+                                    <ItemsControl x:Name="PinnedGroupList"
+                                                  Grid.Row="0"
+                                                  ItemsSource="{Binding Groups.PinnedGroups}"
+                                                  ItemsPanel="{StaticResource GroupRowPanel}"
+                                                  ItemTemplate="{StaticResource GroupRow}" />
+
+                                    <Border Grid.Row="1"
+                                            Height="1"
+                                            Margin="14,12"
+                                            Background="{DynamicResource DividerBrush}"
+                                            IsVisible="{Binding Groups.ShowRailDivider}" />
+
+                                    <ItemsControl x:Name="GroupList"
+                                                  Grid.Row="3"
+                                                  ItemsSource="{Binding Groups.Groups}"
+                                                  ItemsPanel="{StaticResource GroupRowPanel}"
+                                                  ItemTemplate="{StaticResource GroupRow}" />
+                                </Grid>
+
+                                <!--
+                                    选中的竖线单独一个元素,切群组时平移过去(位置由代码算)。
+                                    它待在滚动内容里,所以滚动和窗口缩放都不用重算;
+                                    移动靠 TranslateTransform 的过渡,是滑过去而不是跳过去。
+                                -->
+                                <Border x:Name="GroupIndicator"
+                                        Width="3"
+                                        Height="33"
+                                        CornerRadius="2"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        IsVisible="False"
+                                        IsHitTestVisible="False"
+                                        Background="{DynamicResource TextHoverBrush}">
+                                    <!-- 切私信页时先滑到最后一行域再淡出;回来时从那一行滑上来 -->
+                                    <Border.Transitions>
+                                        <Transitions>
+                                            <DoubleTransition Property="Opacity" Duration="0:0:0.25" />
+                                        </Transitions>
+                                    </Border.Transitions>
+                                    <Border.RenderTransform>
+                                        <TranslateTransform>
+                                            <TranslateTransform.Transitions>
+                                                <Transitions>
+                                                    <DoubleTransition Property="Y" Duration="0:0:0.22" />
+                                                </Transitions>
+                                            </TranslateTransform.Transitions>
+                                        </TranslateTransform>
+                                    </Border.RenderTransform>
+                                </Border>
+                            </Panel>
+                        </ScrollViewer>
+
+                        <!-- 底部「+」:常态灰圆盘、悬停变亮,加号是深色 -->
+                        <Button Grid.Row="1"
+                                Classes="addgroup"
+                                Margin="0,26,0,17"
+                                HorizontalAlignment="Center"
+                                Command="{Binding Groups.OpenCreateGroupDialogCommand}">
+                            <Path Classes="icon"
+                                  Data="{StaticResource IconPlus}"
+                                  Width="12" Height="12"
+                                  Stroke="#121212" />
                         </Button>
-                    </StackPanel>
+                    </Grid>
                 </Border>
 
                 <ContentControl Grid.Column="1" Content="{Binding CurrentPage}" />
@@ -307,11 +467,6 @@
                 指针命中的是宿主内部的子元素，永远传不到宿主上。
                 hover 判定改由窗口级 PointerMoved 做命中测试(见 Core/Shell/TitlePanelController)。
             -->
-            <ContentControl x:Name="KeyboardPanelHost"
-                            Content="{Binding KeyboardPanel}"
-                            IsVisible="{Binding IsKeyboardPanelOpen}"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top" />
 
             <ContentControl x:Name="MicPanelHost"
                             Content="{Binding MicPanel}"
@@ -325,6 +480,331 @@
                             HorizontalAlignment="Left"
                             VerticalAlignment="Top" />
         </Panel>
+
+        <!--
+            创建 / 加入域弹窗:窗口内浮层(和标题栏面板同一套做法),遮罩整窗,卡片居中。
+            点遮罩或右上角 ✕ 关掉。加入那半边还没接后端,输入框先禁用。
+        -->
+        <Panel Classes="dialogoverlay" Classes.open="{Binding Groups.IsCreateGroupDialogOpen}">
+            <Border Background="#99000000" PointerPressed="OnCreateGroupScrimPressed" />
+
+            <Border x:Name="CreateGroupDialog"
+                    Width="400"
+                    MaxHeight="580"
+                    Padding="16,12,16,16"
+                    CornerRadius="14"
+                    Background="{DynamicResource SurfaceHoverBrush}"
+                    BorderBrush="{DynamicResource BorderStrongBrush}"
+                    BorderThickness="1"
+                    RenderTransformOrigin="50%,50%"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+                <Border.RenderTransform>
+                    <ScaleTransform />
+                </Border.RenderTransform>
+
+                <Grid RowDefinitions="Auto,*">
+                    <Panel Grid.Row="0">
+                        <TextBlock Text="创建或加入域"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   IsVisible="{Binding !Groups.IsCreatingGroup}" />
+                        <TextBlock Text="创建域"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   IsVisible="{Binding Groups.IsCreatingGroup}" />
+                        <Button Classes="icon"
+                                Width="28" Height="28" MinHeight="28"
+                                HorizontalAlignment="Right"
+                                Command="{Binding Groups.CloseCreateGroupDialogCommand}"
+                                ToolTip.Tip="关闭">
+                            <Path Classes="icon" Data="{StaticResource IconClose}" Width="14" Height="14" />
+                        </Button>
+                    </Panel>
+
+                    <!-- 第一步:创建 或 加入 -->
+                    <StackPanel Grid.Row="1"
+                                Margin="0,10,0,0"
+                                Spacing="10"
+                                IsVisible="{Binding !Groups.IsCreatingGroup}">
+                        <Button Padding="14,12"
+                                CornerRadius="10"
+                                Background="{DynamicResource BorderFieldBrush}"
+                                BorderThickness="0"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Stretch"
+                                Command="{Binding Groups.ShowCreateGroupStepCommand}">
+                            <Grid ColumnDefinitions="Auto,*">
+                                <Border Width="34"
+                                        Height="34"
+                                        CornerRadius="17"
+                                        Background="{DynamicResource AccentBrush}">
+                                    <Path Classes="icon" Data="{StaticResource IconPlus}" Stroke="#FFFFFF" Width="16" Height="16" />
+                                </Border>
+                                <StackPanel Grid.Column="1" Margin="12,0,0,0" Spacing="2" VerticalAlignment="Center">
+                                    <TextBlock Text="创建" />
+                                    <TextBlock Classes="caption" Text="自己创建一个域并邀请玩家加入" />
+                                </StackPanel>
+                            </Grid>
+                        </Button>
+
+                        <Border Padding="14,12"
+                                CornerRadius="10"
+                                Background="{DynamicResource BorderFieldBrush}">
+                            <StackPanel Spacing="10">
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <Border Width="34"
+                                            Height="34"
+                                            CornerRadius="17"
+                                            Background="{DynamicResource SurfaceHoverBrush}">
+                                        <Path Classes="icon" Data="{StaticResource IconUsers}" Width="16" Height="16" />
+                                    </Border>
+                                    <StackPanel Grid.Column="1" Margin="12,0,0,0" Spacing="2" VerticalAlignment="Center">
+                                        <TextBlock Text="加入" />
+                                        <TextBlock Classes="caption" Text="输入域 ID 进行搜索" />
+                                    </StackPanel>
+                                </Grid>
+
+                                <Grid>
+                                    <TextBox IsEnabled="False" PlaceholderText="请输入域 ID" />
+                                    <Path Classes="icon"
+                                          Data="{StaticResource IconSearch}"
+                                          Width="16" Height="16"
+                                          HorizontalAlignment="Right"
+                                          VerticalAlignment="Center"
+                                          Margin="0,0,12,0"
+                                          IsHitTestVisible="False" />
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- 第二步:创建域表单 -->
+                    <StackPanel Grid.Row="1"
+                                Margin="0,12,0,0"
+                                Spacing="12"
+                                IsVisible="{Binding Groups.IsCreatingGroup}">
+                        <Border Padding="12,10"
+                                CornerRadius="8"
+                                Background="{DynamicResource SurfaceBaseBrush}">
+                            <TextBlock Text="创建你的域,享受高质量、低延迟的游戏语音"
+                                       FontSize="12"
+                                       Foreground="{DynamicResource AccentBrush}"
+                                       TextWrapping="Wrap" />
+                        </Border>
+
+                        <!-- 图片上传还没做,先画成静态占位 -->
+                        <Grid ColumnDefinitions="Auto,*">
+                            <Border Width="72"
+                                    Height="72"
+                                    CornerRadius="10"
+                                    Background="{DynamicResource BorderFieldBrush}">
+                                <Path Classes="icon" Data="{StaticResource IconUsers}" Width="24" Height="24" />
+                            </Border>
+                            <StackPanel Grid.Column="1" Margin="14,0,0,0" Spacing="3" VerticalAlignment="Center">
+                                <TextBlock Text="上传域图片" />
+                                <TextBlock Classes="caption" Text="域图片最小为 128*128" />
+                                <TextBlock Classes="caption" Text="建议尺寸 512*512" />
+                            </StackPanel>
+                        </Grid>
+
+                        <TextBlock Classes="caption" Text="域名称" />
+                        <Grid>
+                            <TextBox Text="{Binding Groups.NewGroupName, Mode=TwoWay}"
+                                     MaxLength="20"
+                                     Padding="12,9,52,9"
+                                     PlaceholderText="我的域" />
+                            <TextBlock Classes="caption"
+                                       Text="{Binding Groups.NewGroupName.Length, StringFormat='{}{0}/20'}"
+                                       HorizontalAlignment="Right"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,12,0"
+                                       IsHitTestVisible="False" />
+                        </Grid>
+
+                        <TextBlock Classes="caption" Text="游戏主题(选填)" />
+                        <ComboBox HorizontalAlignment="Stretch" PlaceholderText="请选择游戏主题">
+                            <ComboBoxItem Content="多人联机" />
+                            <ComboBoxItem Content="沙盒建造" />
+                            <ComboBoxItem Content="竞速" />
+                        </ComboBox>
+
+                        <Grid ColumnDefinitions="*,Auto" Margin="0,4,0,0">
+                            <Button Padding="8,6"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    HorizontalAlignment="Left"
+                                    Command="{Binding Groups.BackToChoiceCommand}">
+                                <TextBlock Classes="caption" Text="上一步" />
+                            </Button>
+                            <Button Grid.Column="1"
+                                    Classes="primary"
+                                    Padding="22,8"
+                                    Command="{Binding Groups.CreateGroupCommand}">
+                                <TextBlock Text="创建" Foreground="#FFFFFF" FontWeight="SemiBold" />
+                            </Button>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Panel>
+
+        <!-- 搜索窗口:窗口内浮层,点遮罩或按 Esc 关闭。搜索接口还没接,下面是空状态。 -->
+        <Panel Classes="dialogoverlay" Classes.open="{Binding Groups.IsSearchOpen}">
+            <Border Background="#99000000" PointerPressed="OnSearchScrimPressed" />
+
+            <!-- 搜索窗口:底色 + 1px 描边,和气泡用同一组颜色 -->
+            <!-- 640x495 对齐参考图;底色留一点透明度,后面的内容能淡淡透出来 -->
+            <Border x:Name="SearchDialog"
+                    Width="640"
+                    Height="495"
+                    Padding="16"
+                    CornerRadius="14"
+                    Background="#E01E1E1E"
+                    BorderBrush="{DynamicResource BorderStrongBrush}"
+                    BorderThickness="1"
+                    RenderTransformOrigin="50%,50%"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+                <Border.RenderTransform>
+                    <ScaleTransform />
+                </Border.RenderTransform>
+
+                <Grid RowDefinitions="Auto,*">
+                    <Border x:Name="SearchInputPill"
+                            Classes="searchfield"
+                            Height="40"
+                            CornerRadius="20"
+                            Padding="14,0"
+                            BorderThickness="1">
+                        <Grid ColumnDefinitions="Auto,*">
+                            <Path Classes="icon"
+                                  Data="{StaticResource IconSearch}"
+                                  Width="14" Height="14"
+                                  VerticalAlignment="Center" />
+                            <TextBox x:Name="SearchInput"
+                                     Grid.Column="1"
+                                     Classes="chatinput"
+                                     Margin="10,0,0,0"
+                                     VerticalContentAlignment="Center"
+                                     KeyDown="OnSearchInputKeyDown"
+                                     GotFocus="OnSearchInputGotFocus"
+                                     LostFocus="OnSearchInputLostFocus"
+                                     Text="{Binding Groups.SearchText, Mode=TwoWay}"
+                                     PlaceholderText="可以输入域 ID/语音厅 ID 或其他关键词搜索" />
+                        </Grid>
+                    </Border>
+
+                    <Grid Grid.Row="1">
+                        <!-- 点空白处:把焦点从输入框收回(点输入框那一条不会碰到这里) -->
+                        <Border Background="Transparent"
+                                Focusable="True"
+                                PointerPressed="OnSearchDialogPressed" />
+
+                        <!-- 空状态:还没有搜索结果(比正中略高,和参考图一致) -->
+                        <StackPanel HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Margin="0,0,0,40"
+                                    Spacing="16"
+                                    IsHitTestVisible="False">
+                            <Path Classes="icon"
+                                  Data="{StaticResource IconSearch}"
+                                  Width="84" Height="84"
+                                  StrokeThickness="1.2"
+                                  Opacity="0.2"
+                                  HorizontalAlignment="Center" />
+                            <TextBlock Classes="caption"
+                                       Text="搜索你感兴趣的域"
+                                       HorizontalAlignment="Center" />
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Panel>
+
+        <!--
+            域菜单:窗口内浮层(不用 ContextMenu —— 那是独立弹窗,会跑到窗口外面)。
+            位置由 MainWindow.AlignGroupMenu 贴着对应域图标摆,并夹在窗口高度内。
+        -->
+        <!-- 域图标悬浮标签:Oopz 是即时弹出的小气泡,不是延时 tooltip -->
+        <Border x:Name="GroupHoverLabel"
+                IsVisible="False"
+                IsHitTestVisible="False"
+                Padding="8,4"
+                CornerRadius="6"
+                Background="{DynamicResource BorderFieldBrush}"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top">
+            <TextBlock x:Name="GroupHoverLabelText" FontSize="14" />
+        </Border>
+        <Panel IsVisible="{Binding Groups.IsGroupMenuOpen}">
+
+            <Border x:Name="GroupMenu"
+                    Width="156"
+                    Padding="6"
+                    CornerRadius="10"
+                    Background="#F02A2A2A"
+                    BoxShadow="0 10 30 0 #80000000"
+                    RenderTransformOrigin="0,0"
+                    BorderBrush="{DynamicResource BorderStrongBrush}"
+                    BorderThickness="1"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top">
+                <Border.RenderTransform>
+                    <ScaleTransform />
+                </Border.RenderTransform>
+                <Panel>
+                    <!-- 菜单背景:开菜单前抓一张整窗快照,裁到菜单这块做高斯模糊(只糊菜单底下的区域) -->
+                    <Border x:Name="GroupMenuGlass"
+                            IsHitTestVisible="False"
+                            ClipToBounds="True"
+                            CornerRadius="9">
+                        <Border.Effect>
+                            <BlurEffect Radius="12" />
+                        </Border.Effect>
+                        <Image x:Name="GroupMenuGlassImage" Stretch="None" Opacity="0.3">
+                            <Image.RenderTransform>
+                                <TranslateTransform />
+                            </Image.RenderTransform>
+                        </Image>
+                    </Border>
+
+                    <StackPanel Spacing="0">
+                        <Button Classes="menuitem" Command="{Binding Groups.PinMenuGroupCommand}">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Text="{Binding Groups.PinMenuLabel}" VerticalAlignment="Center" />
+                                <Viewbox Grid.Column="1" Width="17" Height="17" VerticalAlignment="Center"><Path Classes="icon" Data="{StaticResource IconPin}" Stretch="None" Width="24" Height="24" /></Viewbox>
+                            </Grid>
+                        </Button>
+                        <Button Classes="menuitem">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Text="邀请其他人" VerticalAlignment="Center" />
+                                <Viewbox Grid.Column="1" Width="17" Height="17" VerticalAlignment="Center"><Path Classes="icon" Data="{StaticResource IconPersonPlus}" Stretch="None" Width="24" Height="24" /></Viewbox>
+                            </Grid>
+                        </Button>
+                                                <Border Height="1" Margin="18,4" Background="{DynamicResource BorderStrongBrush}" />
+<Button Classes="menuitem">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Text="开启免打扰" VerticalAlignment="Center" />
+                                <Viewbox Grid.Column="1" Width="17" Height="17" VerticalAlignment="Center"><Path Classes="icon" Data="{StaticResource IconBell}" Stretch="None" Width="24" Height="24" /></Viewbox>
+                            </Grid>
+                        </Button>
+                        <Button Classes="menuitem">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Text="我在本域的昵称" VerticalAlignment="Center" />
+                                <Viewbox Grid.Column="1" Width="17" Height="17" VerticalAlignment="Center"><Path Classes="icon" Data="{StaticResource IconPerson}" Stretch="None" Width="24" Height="24" /></Viewbox>
+                            </Grid>
+                        </Button>
+                    </StackPanel>
+                </Panel>
+            </Border>
+        </Panel>
     </Grid>
     </Border>
 </Window>
+
+

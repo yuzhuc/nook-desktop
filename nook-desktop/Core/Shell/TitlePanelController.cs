@@ -8,7 +8,7 @@ using nook_desktop.ViewModels;
 namespace nook_desktop.Core.Shell;
 
 /// <summary>
-/// 标题栏浮层(键盘 / 话筒 / 耳机)的展开、收起与定位。
+/// 标题栏浮层(话筒 / 耳机)的展开、收起与定位。
 ///
 /// 浮层不用 Flyout:Flyout 是独立的顶层窗口,会画到主窗口外面。
 /// 这里把浮层作为窗口内容的最后一层渲染,由本类按触发图标的位置对齐。
@@ -19,18 +19,16 @@ namespace nook_desktop.Core.Shell;
 /// </summary>
 internal sealed class TitlePanelController
 {
-    /// <summary>收起延迟。太长会显得粘,太短会在图标与面板之间那点空隙里误关。</summary>
-    private static readonly TimeSpan CloseDelay = TimeSpan.FromMilliseconds(120);
+    /// <summary>收起延迟。太长会显得粘(之前 120ms 反馈过慢),40ms 足够跨过图标与面板之间那点空隙。</summary>
+    private static readonly TimeSpan CloseDelay = TimeSpan.FromMilliseconds(40);
 
     /// <summary>浮层与图标之间的垂直间距。</summary>
     private const double PanelOffset = 6;
 
     private readonly Window _window;
     private readonly MainWindowViewModel _viewModel;
-    private readonly Control _keyboardAnchor;
     private readonly Control _micAnchor;
     private readonly Control _headphoneAnchor;
-    private readonly Control _keyboardHost;
     private readonly Control _micHost;
     private readonly Control _headphoneHost;
     private readonly DispatcherTimer _closeTimer;
@@ -41,19 +39,15 @@ internal sealed class TitlePanelController
     public TitlePanelController(
         Window window,
         MainWindowViewModel viewModel,
-        Control keyboardAnchor,
         Control micAnchor,
         Control headphoneAnchor,
-        Control keyboardHost,
         Control micHost,
         Control headphoneHost)
     {
         _window = window;
         _viewModel = viewModel;
-        _keyboardAnchor = keyboardAnchor;
         _micAnchor = micAnchor;
         _headphoneAnchor = headphoneAnchor;
-        _keyboardHost = keyboardHost;
         _micHost = micHost;
         _headphoneHost = headphoneHost;
 
@@ -155,43 +149,21 @@ internal sealed class TitlePanelController
     private void CancelClose() => _closeTimer.Stop();
 
     private bool IsOverAnyTrigger(Point point)
-        => IsOver(_keyboardAnchor, point)
-        || IsOver(_micAnchor, point)
-        || IsOver(_headphoneAnchor, point);
+        => ControlHitTest.IsOver(_micAnchor, _window, point)
+        || ControlHitTest.IsOver(_headphoneAnchor, _window, point);
 
     private bool IsOverOpenPanel(Point point)
     {
         var host = HostOf(_viewModel.OpenPanel);
-        return host is { IsVisible: true } && IsOver(host, point);
-    }
-
-    /// <summary>控件在窗口坐标系里的矩形是否包含该点。</summary>
-    private bool IsOver(Control control, Point point)
-    {
-        if (control.Bounds.Width <= 0 || control.Bounds.Height <= 0)
-        {
-            return false;
-        }
-
-        if (control.TranslatePoint(new Point(0, 0), _window) is not { } origin)
-        {
-            return false;
-        }
-
-        return point.X >= origin.X
-            && point.X <= origin.X + control.Bounds.Width
-            && point.Y >= origin.Y
-            && point.Y <= origin.Y + control.Bounds.Height;
+        return host is { IsVisible: true } && ControlHitTest.IsOver(host, _window, point);
     }
 
     private TitlePanelKind KindOf(Control anchor) =>
         ReferenceEquals(anchor, _micAnchor) ? TitlePanelKind.Mic
-        : ReferenceEquals(anchor, _headphoneAnchor) ? TitlePanelKind.Headphone
-        : TitlePanelKind.Keyboard;
+        : TitlePanelKind.Headphone;
 
     private Control? AnchorOf(TitlePanelKind kind) => kind switch
     {
-        TitlePanelKind.Keyboard => _keyboardAnchor,
         TitlePanelKind.Mic => _micAnchor,
         TitlePanelKind.Headphone => _headphoneAnchor,
         _ => null,
@@ -199,7 +171,6 @@ internal sealed class TitlePanelController
 
     private Control? HostOf(TitlePanelKind kind) => kind switch
     {
-        TitlePanelKind.Keyboard => _keyboardHost,
         TitlePanelKind.Mic => _micHost,
         TitlePanelKind.Headphone => _headphoneHost,
         _ => null,

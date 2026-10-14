@@ -3,23 +3,52 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:nook_desktop.ViewModels.Room"
+             xmlns:vw="clr-namespace:nook_desktop.ViewModels"
              xmlns:models="clr-namespace:nook_desktop.Models"
              mc:Ignorable="d"
              x:Class="nook_desktop.Views.Room.RoomView"
              x:DataType="vm:RoomViewModel"
              d:DesignWidth="1180"
              d:DesignHeight="700">
-    <Grid RowDefinitions="*,Auto">
+    <UserControl.Resources>
+        <!-- 频道行:分组内和未分组的频道共用这一份模板 -->
+        <DataTemplate x:Key="ChannelRow" DataType="vm:RoomChannelViewModel">
+            <Button Classes="listitem"
+                    Classes.selected="{Binding IsSelected}"
+                    Command="{Binding SelectCommand}"
+                    PointerPressed="OnChannelRightPressed"
+                    Margin="0,0,0,2"
+                    HorizontalContentAlignment="Stretch">
+                <Grid ColumnDefinitions="Auto,*,Auto">
+                    <Panel VerticalAlignment="Center">
+                        <Path Classes="icon"
+                              Data="{StaticResource IconHash}"
+                              Width="16" Height="16"
+                              IsVisible="{Binding !IsVoice}" />
+                        <Path Classes="icon"
+                              Data="{StaticResource IconHeadphones}"
+                              Width="16" Height="16"
+                              IsVisible="{Binding IsVoice}" />
+                    </Panel>
+                    <TextBlock Grid.Column="1"
+                               Margin="10,0,0,0"
+                               Text="{Binding Name}"
+                               TextTrimming="CharacterEllipsis"
+                               VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="2"
+                               Classes="caption"
+                               IsVisible="{Binding IsVoice}"
+                               Text="{Binding CapacityText}"
+                               VerticalAlignment="Center" />
+                </Grid>
+            </Button>
+        </DataTemplate>
+    </UserControl.Resources>
+    <Grid>
         <!--
-            三栏：频道列表 240 | 聊天区自适应 | 成员列表 240。
-            右侧成员栏宽度与左侧频道栏一致，两侧竖线也都用 DividerBrush，
-            与标题栏里补画的那两段接成完整的分隔线。
-            改宽度时这里和 MainWindow.axaml 的标题栏 ColumnDefinitions 要一起改
-            （右栏宽度要等于成员栏宽度），两处都在注释里标了。
-            之所以不能抽成资源：Avalonia 的 Grid.ColumnDefinitions 不接受
-            DynamicResource，属性值里混了字面量 "*" 时无法解析成单一资源引用。
-        -->
-        <Grid Grid.Row="0" ColumnDefinitions="240,*,236">
+            三栏：频道列表 240 | 主页 自适应 | 成员列表 236,版式照 Oopz 频道页。
+            -->
+        <Grid ColumnDefinitions="240,*,Auto">
 
             <!-- 频道列表 -->
             <Border Grid.Column="0"
@@ -27,140 +56,440 @@
                     BorderBrush="{DynamicResource DividerBrush}"
                     BorderThickness="0,0,1,0">
                 <Grid RowDefinitions="Auto,*,Auto">
-                    <Border Grid.Row="0" Padding="16,16,16,10">
-                        <StackPanel Spacing="2">
-                            <TextBlock Classes="h2" Text="{Binding Group.Name}" />
-                            <TextBlock Classes="caption"
-                                       Text="{Binding Group.Description}"
-                                       TextTrimming="CharacterEllipsis" />
-                        </StackPanel>
-                    </Border>
+                    <StackPanel Grid.Row="0" Margin="16,16,10,0" Spacing="10">
+                        <!-- 群组抬头：群名 + 更多 -->
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Classes="h1"
+                                       Text="{Binding Group.Name}"
+                                       TextTrimming="CharacterEllipsis"
+                                       VerticalAlignment="Center" />
 
-                    <ScrollViewer Grid.Row="1" Padding="10,0">
-                        <StackPanel Spacing="2">
-                            <TextBlock Classes="caption"
-                                       Margin="6,10,0,4"
-                                       Text="语音频道" />
-                            <ItemsControl ItemsSource="{Binding Group.VoiceChannels}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="models:VoiceChannel">
-                                        <Button Classes="listitem" Margin="0,0,0,2">
-                                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                                <Path Classes="icon"
-                                                      Data="{StaticResource IconHash}"
-                                                      Width="14"
-                                                      Height="14"
-                                                      VerticalAlignment="Center" />
-                                                <TextBlock Text="{Binding Name}"
-                                                           VerticalAlignment="Center" />
-                                            </StackPanel>
-                                        </Button>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
+                            <Button x:Name="GroupSettingsButton" Grid.Column="1"
+                                    Classes="icon"
+                                    Width="24" Height="24" MinHeight="24" Padding="0"
+                                    VerticalAlignment="Center" HorizontalAlignment="Center"
+                                    Command="{Binding OpenGroupSettingsMenuCommand}" ToolTip.Tip="群组设置">
+                                <Viewbox Width="24" Height="24"><Path Classes="icon" Data="{StaticResource IconMore}" Stretch="None" Width="24" Height="24" /></Viewbox>
+                            </Button>
+                        </Grid>
 
-                            <TextBlock Classes="caption"
-                                       Margin="6,10,0,4"
-                                       Text="文字频道" />
-                            <ItemsControl ItemsSource="{Binding Group.TextChannels}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="models:TextChannel">
-                                        <Button Classes="listitem" Margin="0,0,0,2">
-                                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                                <Path Classes="icon"
-                                                      Data="{StaticResource IconChat}"
-                                                      Width="14"
-                                                      Height="14"
-                                                      VerticalAlignment="Center" />
-                                                <TextBlock Text="{Binding Name}"
-                                                           VerticalAlignment="Center" />
+                        <Border Classes="idpill"
+                                CornerRadius="8"
+                                Padding="8,3"
+                                HorizontalAlignment="Left"
+                                Cursor="Hand"
+                                PointerPressed="OnCopyGroupIdPressed">
+                            <TextBlock FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" Text="{Binding Group.Id, StringFormat='ID:{0}'}" />
+                        </Border>
+                    </StackPanel>
+                    <ScrollViewer Grid.Row="1" Margin="0,12,0,0" Padding="10,0">
+                        <Panel x:Name="ChannelListLayer">
+                            <!--
+                                选中频道的高亮块:放在行下面一层,切频道时平移过去。
+                                它待在滚动内容里,所以列表滚动时高亮跟着一起滚。
+                            -->
+                            <Border x:Name="ChannelSlider"
+                                    Height="40"
+                                    CornerRadius="8"
+                                    Background="{DynamicResource BorderFieldBrush}"
+                                    VerticalAlignment="Top"
+                                    IsHitTestVisible="False">
+                                <Border.RenderTransform>
+                                    <!-- 位移用过渡,滑动结束后值就地落定(Animation 的 FillMode 默认会把值弹回去) -->
+                                    <TranslateTransform>
+                                        <TranslateTransform.Transitions>
+                                            <Transitions>
+                                                <DoubleTransition Property="Y" Duration="0:0:0.18" />
+                                            </Transitions>
+                                        </TranslateTransform.Transitions>
+                                    </TranslateTransform>
+                                </Border.RenderTransform>
+                            </Border>
+
+                            <StackPanel Spacing="2">
+                                <!-- 主页：固定在最上面的一项(不在列表里,找行时要按名字取) -->
+                                <Button x:Name="HomeChannelRow"
+                                        PointerPressed="OnChannelRightPressed"
+                                        Classes="listitem"
+                                        Classes.selected="{Binding Home.IsSelected}"
+                                        Command="{Binding Home.SelectCommand}"
+                                        HorizontalContentAlignment="Stretch">
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <Path Classes="icon"
+                                              Data="{StaticResource IconChat}"
+                                              Width="16" Height="16"
+                                              VerticalAlignment="Center" />
+                                        <TextBlock Text="{Binding Home.Name}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+
+                                <!-- 没有归到分组里的频道 -->
+                                <ItemsControl ItemsSource="{Binding LooseChannels}"
+                                              ItemTemplate="{StaticResource ChannelRow}" />
+
+                                <!-- 分组:上面一条分界线,下面是组内频道 -->
+                                <ItemsControl ItemsSource="{Binding Categories}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate DataType="vm:RoomCategoryViewModel">
+                                            <StackPanel Spacing="2">
+                                                <Border Classes="divider" Margin="0,10,0,4" />
+
+                                                <TextBlock Classes="caption"
+                                                           Margin="6,0,0,2"
+                                                           Text="{Binding Name}" />
+
+                                                <ItemsControl ItemsSource="{Binding Channels}"
+                                                              ItemTemplate="{StaticResource ChannelRow}" />
                                             </StackPanel>
-                                        </Button>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </StackPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Panel>
                     </ScrollViewer>
 
-                    <Button Grid.Row="2"
-                            Margin="10,10,10,14"
-                            Classes="secondary"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Center"
-                            IsEnabled="False">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <Path Classes="icon"
-                                  Data="{StaticResource IconPlus}"
-                                  Width="14"
-                                  Height="14" />
-                            <TextBlock Text="添加频道" />
-                        </StackPanel>
-                    </Button>
                 </Grid>
             </Border>
 
-            <!-- 聊天主区 -->
+            <!-- 主页 -->
             <Grid Grid.Column="1" RowDefinitions="Auto,*,Auto">
-                <Border Grid.Row="0"
-                        Padding="20,14"
-                        BorderBrush="{DynamicResource BorderSubtleBrush}"
-                        BorderThickness="0,0,0,1">
-                    <TextBlock Classes="h2" Text="文字频道" />
+                <Border Grid.Row="0" Padding="20,14,10,14">
+                    <Grid ColumnDefinitions="Auto,*,Auto">
+                        <Panel Width="36" Height="36" VerticalAlignment="Center">
+                            <Panel>
+                                <Path Classes="icon"
+                                      Data="{StaticResource IconChat}"
+                                      Width="18" Height="18"
+                                      IsVisible="{Binding !SelectedIsVoice}" />
+                                <Path Classes="icon"
+                                      Data="{StaticResource IconHeadphones}"
+                                      Width="18" Height="18"
+                                      IsVisible="{Binding SelectedIsVoice}" />
+                            </Panel>
+                        </Panel>
+
+                        <TextBlock Grid.Column="1"
+                                   Classes="h1"
+                                   Margin="10,0,0,0"
+                                   Text="{Binding SelectedChannel.Name}"
+                                   VerticalAlignment="Center" />
+
+                        <StackPanel Grid.Column="2"
+                                    Orientation="Horizontal"
+                                    Spacing="4"
+                                    VerticalAlignment="Center">
+                            <Button Classes="icon" Width="28" Height="28" MinHeight="0" Padding="0" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                    Command="{Binding AddMemberCommand}"
+                                    ToolTip.Tip="添加成员">
+                                <Viewbox Width="24" Height="24"><Path Classes="icon" Data="{StaticResource IconSend}" Stretch="None" Width="24" Height="24" /></Viewbox>
+                            </Button>
+                            <Border Width="1" Height="20" Margin="7,0,7,0" VerticalAlignment="Center" Background="{DynamicResource BorderStrongBrush}" />
+                            <Button Classes="icon" Width="28" Height="28" MinHeight="0" Padding="0" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <Viewbox Width="24" Height="24"><Path Classes="icon" Data="{StaticResource IconTag}" Stretch="None" Width="24" Height="24" /></Viewbox>
+                            </Button>
+                            <Button Classes="icon" Width="28" Height="28" MinHeight="0" Padding="0" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                    Command="{Binding ToggleMemberListCommand}"
+                                    ToolTip.Tip="{Binding MemberListToggleTip}">
+                                <Viewbox Width="24" Height="24"><Path Classes="icon" Data="{StaticResource IconList}" Stretch="None" Width="24" Height="24" /></Viewbox>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
                 </Border>
 
-                <ScrollViewer Grid.Row="1" Padding="20,16">
-                    <ItemsControl ItemsSource="{Binding Messages}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate DataType="models:ChatMessage">
-                                <StackPanel Margin="0,0,0,12" Spacing="2">
-                                    <StackPanel Orientation="Horizontal" Spacing="8">
-                                        <TextBlock Text="{Binding AuthorName}" FontWeight="SemiBold" FontSize="13" />
-                                        <TextBlock Classes="caption" Text="{Binding SentAt}" />
+                <ScrollViewer Grid.Row="1" Padding="20,16" IsVisible="{Binding !IsComposerExpanded}">
+                    <StackPanel Spacing="16">
+
+
+                        <ItemsControl ItemsSource="{Binding Messages}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="vm:RoomMessage">
+                                    <StackPanel Margin="0,0,0,8">
+                                        <TextBlock Classes="caption"
+                                                   Text="{Binding DateText}"
+                                                   HorizontalAlignment="Center"
+                                                   Margin="0,10,0,10"
+                                                   IsVisible="{Binding ShowDate}" />
+                                        <Grid ColumnDefinitions="Auto,*">
+                                            <Panel Grid.Column="0" Width="28" Margin="0,2,0,0" VerticalAlignment="Top">
+                                                <Border CornerRadius="14"
+                                                        Background="{DynamicResource SurfaceHoverBrush}"
+                                                        IsVisible="{Binding ShowHeader}">
+                                                    <TextBlock Text="{Binding Initial}"
+                                                               FontSize="12"
+                                                               HorizontalAlignment="Center"
+                                                               VerticalAlignment="Center" />
+                                                </Border>
+                                            </Panel>
+                                            <StackPanel Grid.Column="1" Margin="10,0,0,0" Spacing="3">
+                                                <StackPanel Orientation="Horizontal"
+                                                            Spacing="8"
+                                                            IsVisible="{Binding ShowHeader}">
+                                                    <TextBlock Text="{Binding AuthorName}" FontWeight="SemiBold" FontSize="13" />
+                                                    <TextBlock Classes="caption" Text="{Binding TimeText}" />
+                                                </StackPanel>
+                                                <TextBlock Text="{Binding Content}" TextWrapping="Wrap" />
+                                            </StackPanel>
+                                        </Grid>
                                     </StackPanel>
-                                    <TextBlock Text="{Binding Content}" TextWrapping="Wrap" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
                 </ScrollViewer>
 
-                <Grid Grid.Row="2"
-                      Margin="20,12,20,16"
+                <!--
+                    输入条:常态贴中栏底部单行;展开时照 Oopz 铺满整个聊天区,
+                    顶部是 B/S/I/U/旗 工具条 + 右上角收起,底部只剩表情和回车。
+                -->
+                <Grid Classes="composer" Classes.expanded="{Binding IsComposerExpanded}"
+                      RowDefinitions="Auto,*"
                       ColumnDefinitions="*,Auto">
-                    <TextBox Grid.Column="0"
-                             MinHeight="40"
-                             MaxHeight="120"
+                    <!-- 展开态面板:1px 顶线 + 左上亮右下暗的对角渐变(不挡点击) -->
+                    <Border Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="2"
+                            Classes="composerpanel"
+                            IsHitTestVisible="False"
+                            IsVisible="{Binding IsComposerExpanded}" />
+
+                    <Grid Grid.Row="0" Grid.ColumnSpan="2"
+                          Classes="richtools"
+                          IsVisible="{Binding IsComposerExpanded}">
+                        <StackPanel Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
+                        <!-- 工具条 5 个:悬浮只提亮,不给文字气泡(照 Oopz) -->
+                        <Button Classes="bubbleicon richtool">
+                            <TextBlock Classes="richtool" Text="B" FontWeight="Bold" />
+                        </Button>
+                        <Button Classes="bubbleicon richtool">
+                            <TextBlock Classes="richtool" Text="S" TextDecorations="Strikethrough" />
+                        </Button>
+                        <Button Classes="bubbleicon richtool">
+                            <TextBlock Classes="richtool" Text="I" FontStyle="Italic" />
+                        </Button>
+                        <Button Classes="bubbleicon richtool">
+                            <TextBlock Classes="richtool" Text="U" TextDecorations="Underline" />
+                        </Button>
+                        <Button Classes="bubbleicon richtool">
+                            <Path Classes="icon" Data="{StaticResource IconFlagEditor}"
+                                  Width="12" Height="16" StrokeThickness="1.5"
+                                  VerticalAlignment="Center" />
+                        </Button>
+                        </StackPanel>
+                        <Button Classes="icon bubbleicon composercollapse"
+                                HorizontalAlignment="Right" VerticalAlignment="Center"
+                                Width="16" Height="16" MinHeight="0" Padding="0"
+                                Command="{Binding ToggleComposerCommand}">
+                            <Path Classes="icon" Data="{StaticResource IconCollapse}" Width="16" Height="16" />
+                        </Button>
+                    </Grid>
+
+                    <TextBox x:Name="MessageInput" Grid.Row="1" Classes="underline composerinput" Classes.expanded="{Binding IsComposerExpanded}"
                              AcceptsReturn="True"
                              TextWrapping="Wrap"
-                             VerticalContentAlignment="Center"
+                             VerticalContentAlignment="Top"
                              Text="{Binding InputText}"
-                             PlaceholderText="发送消息..." />
-                    <Button Grid.Column="1"
-                            Margin="10,0,0,0"
-                            Classes="primary"
-                            VerticalAlignment="Stretch"
-                            Command="{Binding SendMessageCommand}"
-                            ToolTip.Tip="发送">
-                        <Path Classes="icon"
-                              Data="{StaticResource IconSend}"
-                              Stroke="#FFFFFF"
-                              Width="16"
-                              Height="16" />
-                    </Button>
+                            
+                             PlaceholderText="{Binding SelectedChannel.Name, StringFormat='发送至频道 {0}'}" />
+
+                    <!--
+                        常态:回复/表情/截图/更多/展开;
+                        展开态照 Oopz 只剩表情 + 回车,而且顺序换过来(表情在左,回车在右)。
+                        截图和更多不挂悬浮文字:Oopz 里这两个是弹面板的。
+                    -->
+                    <StackPanel Grid.Row="1" Grid.Column="1"
+                                Classes="composericons"
+                                IsVisible="{Binding !IsComposerExpanded}"
+                                Orientation="Horizontal"
+                                Spacing="14">
+                        <Button Classes="icon bubbleicon" Background="Transparent" Width="20" Height="20" MinHeight="0" Padding="0">
+                            <Path Classes="icon" Data="{StaticResource IconEnter}" Width="20" Height="20" />
+                        </Button>
+                        <Button Classes="icon bubbleicon" Background="Transparent" Width="20" Height="20" MinHeight="0" Padding="0">
+                            <Path Classes="icon" Data="{StaticResource IconEmoji}" Width="20" Height="20" />
+                        </Button>
+                        <Button x:Name="ScissorsButton" Classes="icon bubbleicon" Background="Transparent" Width="20" Height="20" MinHeight="0" Padding="0"
+                                PointerEntered="OnScissorsPointerEntered" PointerExited="OnScissorsPointerExited">
+                            <Path Classes="icon" Data="{StaticResource IconScissors}" Width="20" Height="20" />
+                        </Button>
+                        <Button x:Name="MoreButton" Classes="icon bubbleicon" Background="Transparent" Width="20" Height="20" MinHeight="0" Padding="0"
+                                PointerEntered="OnMorePointerEntered" PointerExited="OnMorePointerExited">
+                            <Path Classes="icon" Data="{StaticResource IconPlusCircle}" Width="20" Height="20" />
+                        </Button>
+                        <Button Classes="icon bubbleicon" Background="Transparent" Width="20" Height="20" MinHeight="0" Padding="0" ToolTip.Tip="展开" ToolTip.Placement="Top" Command="{Binding ToggleComposerCommand}">
+                            <Path Classes="icon" Data="{StaticResource IconExpand}" Width="20" Height="20" />
+                        </Button>
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Grid.Column="1"
+                                Classes="composericons expanded"
+                                IsVisible="{Binding IsComposerExpanded}"
+                                Orientation="Horizontal"
+                                Spacing="18">
+                        <Button Classes="icon bubbleicon" Background="Transparent" Width="20" Height="20" MinHeight="0" Padding="0">
+                            <Path Classes="icon" Data="{StaticResource IconEmoji}" Width="20" Height="20" />
+                        </Button>
+                        <Button Classes="icon bubbleicon" Background="Transparent" Width="20" Height="20" MinHeight="0" Padding="0">
+                            <Path Classes="icon" Data="{StaticResource IconEnter}" Width="20" Height="20" />
+                        </Button>
+                    </StackPanel>
+
                 </Grid>
+                <!--
+                    ✂ / ⊕ 的悬浮面板(照 Oopz 实测:浮在小图标上方 19px、宽 180、#202020、圆角 4)。
+                    放在消息区那一行(不吃 Auto 测量,不会把输入条顶上去),显隐由 RoomView.axaml.cs 控制。
+                -->
+                <Border x:Name="ScissorsPanel"
+                        PointerEntered="OnPanelPointerEntered" PointerExited="OnPanelPointerExited"
+                        Grid.Row="1"
+                        Classes="hoverpanel" Height="54"
+                        HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                        Margin="0,0,-9,12"
+                        IsVisible="False">
+                    <Grid ColumnDefinitions="Auto,*,Auto,Auto" Margin="13,0,17,0">
+                        <TextBlock Text="快捷键" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="2" Text="未设置" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextSecondaryBrush}" />
+                        <Path Grid.Column="3" Classes="icon" Data="{StaticResource IconChevronRight}"
+                              Stroke="{DynamicResource TextMutedBrush}"
+                              Width="12" Height="12" Margin="8,0,0,0" VerticalAlignment="Center" />
+                    </Grid>
+                </Border>
+
+                <Border x:Name="MorePanel"
+                        PointerEntered="OnPanelPointerEntered" PointerExited="OnPanelPointerExited"
+                        Grid.Row="1"
+                        Classes="hoverpanel" Height="192"
+                        HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                        Margin="0,0,-41,12"
+                        IsVisible="False">
+                    <StackPanel>
+                        <Button Classes="panelrow">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Text="上传文件" VerticalAlignment="Center" />
+                                <Path Grid.Column="1" Classes="icon" Data="{StaticResource IconDocUp}"
+                                      Stroke="{DynamicResource TextPrimaryBrush}" Width="15" Height="15" VerticalAlignment="Center" />
+                            </Grid>
+                        </Button>
+                        <Button Classes="panelrow">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Text="发起抽奖" VerticalAlignment="Center" />
+                                <Path Grid.Column="1" Classes="icon" Data="{StaticResource IconGift}"
+                                      Stroke="{DynamicResource TextPrimaryBrush}" Width="15" Height="15" VerticalAlignment="Center" />
+                            </Grid>
+                        </Button>
+                        <Button Classes="panelrow">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Text="发放身份" VerticalAlignment="Center" />
+                                <Path Grid.Column="1" Classes="icon" Data="{StaticResource IconTag}"
+                                      Stroke="{DynamicResource TextPrimaryBrush}" Width="15" Height="15" VerticalAlignment="Center" />
+                            </Grid>
+                        </Button>
+                        <Button Classes="panelrow">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Text="播放伴奏" VerticalAlignment="Center" />
+                                <Path Grid.Column="1" Classes="icon" Data="{StaticResource IconMusicNote}"
+                                      Stroke="{DynamicResource TextPrimaryBrush}" Width="15" Height="15" VerticalAlignment="Center" />
+                            </Grid>
+                        </Button>
+                    </StackPanel>
+                </Border>
+
             </Grid>
 
             <!-- 右侧成员栏：宽度与左侧频道栏一致，左边缘一条竖线 -->
-            <Border Grid.Column="2"
+            <Border Grid.Column="2" Width="{Binding MemberListWidth}" ClipToBounds="True">
+                <!-- 收起动画:容器宽度 236->0,里面那层固定 236 宽,像抽屉一样往右滑出去 -->
+                <Border.Transitions>
+                    <Transitions>
+                        <DoubleTransition Property="Width" Duration="0:0:0.32" Easing="QuadraticEaseOut" />
+                    </Transitions>
+                </Border.Transitions>
+                <Border Width="236" HorizontalAlignment="Left"
                     BorderBrush="{DynamicResource DividerBrush}"
                     BorderThickness="1,0,0,0">
-                <Grid RowDefinitions="Auto,*">
-                    <Border Grid.Row="0" Padding="16,16,16,10">
-                        <TextBlock Classes="h2" Text="成员" />
+                <Grid RowDefinitions="45,Auto,*">
+                    <!--
+                        成员栏抬头(照 Oopz):常态是「在线 - N」+ 右边放大镜;点放大镜换成「搜索成员」输入框。
+                        动画:搜索框 + 底线从上方 -45 滑到 0(窗帘式下拉),常态那行同时往上滑出去;
+                        放大镜单独放、不参与滑动,所以全程不动。分组标题那一行的高度也跟着动,
+                        成员列表因此是平滑下移/上移,不是硬跳。
+                    -->
+                    <Grid Grid.Row="0" Height="45" ClipToBounds="True">
+                        <TextBox x:Name="MemberSearchBox"
+                                 Classes="bare"
+                                 FontSize="14"
+                                 Height="44"
+                                 Margin="11,6,38,1"
+                                 MinHeight="0"
+                                 Padding="0"
+                                 VerticalAlignment="Top"
+                                 VerticalContentAlignment="Center"
+                                 Text="{Binding MemberSearchText}"
+                                 PlaceholderText="搜索成员">
+                            <TextBox.RenderTransform>
+                                <TranslateTransform Y="{Binding MemberSearchDropOffset}">
+                                    <TranslateTransform.Transitions>
+                                        <Transitions>
+                                            <DoubleTransition Property="Y" Duration="0:0:0.32" Easing="QuadraticEaseOut" />
+                                        </Transitions>
+                                    </TranslateTransform.Transitions>
+                                </TranslateTransform>
+                            </TextBox.RenderTransform>
+                        </TextBox>
+
+                        <Border Height="1" Margin="11,0,10,0"
+                                VerticalAlignment="Bottom"
+                                Background="#DCDCDC">
+                            <Border.RenderTransform>
+                                <TranslateTransform Y="{Binding MemberSearchDropOffset}">
+                                    <TranslateTransform.Transitions>
+                                        <Transitions>
+                                            <DoubleTransition Property="Y" Duration="0:0:0.32" Easing="QuadraticEaseOut" />
+                                        </Transitions>
+                                    </TranslateTransform.Transitions>
+                                </TranslateTransform>
+                            </Border.RenderTransform>
+                        </Border>
+
+                        <Button x:Name="MemberSearchButton"
+                                Classes="icon bubbleicon"
+                                Background="Transparent"
+                                Width="18" Height="18" MinHeight="0" Padding="0"
+                                HorizontalAlignment="Right"
+                                Margin="0,0,16,7"
+                                VerticalAlignment="Bottom"
+                                Click="OnMemberSearchClick">
+                            <Path Classes="icon" Data="{StaticResource IconSearch}" Width="13" Height="13" />
+                        </Button>
+                    </Grid>
+
+                        <!--
+                            单个「在线 - N」:不裁剪、直接从上滑到线下面(位置和 Oopz 一致),
+                            不是"先消失再出现";第一行高度固定 45,所以它滑出去不会撑高布局。
+                        -->
+                        <TextBlock Classes="caption"
+                                   Margin="22,20,0,0"
+                                   VerticalAlignment="Top" FontSize="14" Foreground="{DynamicResource TextSecondaryBrush}"
+                                   Text="{Binding MemberGroupLabel}">
+                            <TextBlock.RenderTransform>
+                                <TranslateTransform Y="{Binding MemberHeaderOffset}">
+                                    <TranslateTransform.Transitions>
+                                        <Transitions>
+                                            <DoubleTransition Property="Y" Duration="0:0:0.32" Easing="QuadraticEaseOut" />
+                                        </Transitions>
+                                    </TranslateTransform.Transitions>
+                                </TranslateTransform>
+                            </TextBlock.RenderTransform>
+                        </TextBlock>
+
+                    <!-- 搜索态下分组标题挪到线下面(Oopz 也是这样);高度做动画,成员列表跟着平滑下移 -->
+                    <Border Grid.Row="1" ClipToBounds="True" Height="{Binding MemberSearchLabelHeight}">
+                        <Border.Transitions>
+                            <Transitions>
+                                <DoubleTransition Property="Height" Duration="0:0:0.32" Easing="QuadraticEaseOut" />
+                            </Transitions>
+                        </Border.Transitions>
                     </Border>
 
-                    <ScrollViewer Grid.Row="1" Padding="10,0,10,10">
-                        <ItemsControl ItemsSource="{Binding Members}">
+                    <ScrollViewer Grid.Row="2" Padding="23,14,10,10">
+                        <ItemsControl ItemsSource="{Binding VisibleMembers}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate DataType="models:RoomMember">
                                     <Grid ColumnDefinitions="Auto,*" Margin="0,0,0,6">
@@ -168,7 +497,7 @@
                                                 Width="30"
                                                 Height="30"
                                                 CornerRadius="15"
-                                                Background="{DynamicResource SurfaceOverlayBrush}"
+                                                Background="{DynamicResource SurfaceHoverBrush}"
                                                 VerticalAlignment="Center">
                                             <TextBlock Text="{Binding Profile.DisplayName[0]}"
                                                        FontSize="13"
@@ -202,60 +531,123 @@
                     </ScrollViewer>
                 </Grid>
             </Border>
+            </Border>
         </Grid>
-
-        <!-- 底部语音控制条 -->
-        <Border Grid.Row="1"
-                Padding="20,12"
-                Background="{DynamicResource SurfaceRaisedBrush}"
-                BorderBrush="{DynamicResource BorderSubtleBrush}"
-                BorderThickness="0,1,0,0">
-            <Grid ColumnDefinitions="Auto,*,Auto">
-                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                    <Border Classes="avatar" Width="40" Height="40">
-                        <TextBlock Text="B" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                    </Border>
-                    <StackPanel Spacing="1" VerticalAlignment="Center">
-                        <TextBlock Text="nook" FontWeight="SemiBold" FontSize="13" />
-                        <TextBlock Classes="caption" Text="已连接" />
-                    </StackPanel>
-                </StackPanel>
-
-                <StackPanel Grid.Column="1"
-                            Orientation="Horizontal"
-                            Spacing="8"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center">
-                    <Button Classes="icon"
-                            Command="{Binding ToggleMuteCommand}"
-                            ToolTip.Tip="{Binding MicLabel}">
-                        <Path Classes="icon" Data="{StaticResource IconMic}" />
-                    </Button>
-                    <Button Classes="icon"
-                            Command="{Binding ToggleDeafenCommand}"
-                            ToolTip.Tip="{Binding DeafenLabel}">
-                        <Path Classes="icon" Data="{StaticResource IconHeadphones}" />
-                    </Button>
-                    <Button Classes="icon" ToolTip.Tip="屏幕共享" IsEnabled="False">
-                        <Path Classes="icon" Data="{StaticResource IconScreen}" />
-                    </Button>
-                </StackPanel>
-
-                <Button Grid.Column="2"
-                        Classes="danger"
-                        VerticalAlignment="Center"
-                        Command="{Binding LeaveRoomCommand}"
-                        ToolTip.Tip="离开房间">
-                    <StackPanel Orientation="Horizontal" Spacing="6">
-                        <Path Classes="icon"
-                              Data="{StaticResource IconPhoneOff}"
-                              Stroke="#FFFFFF"
-                              Width="16"
-                              Height="16" />
-                        <TextBlock Text="离开" Foreground="#FFFFFF" VerticalAlignment="Center" />
-                    </StackPanel>
+        <!--
+            群组设置菜单(频道栏 ⋮ 那个):窗口内浮层,位置由 RoomView.axaml.cs 贴着按钮摆。
+            颜色/圆角照 Oopz 实测(#1D1D1D 底 + #282828 描边)。
+        -->
+        <Border x:Name="GroupSettingsMenu"
+                IsVisible="{Binding IsGroupSettingsMenuOpen}"
+                Width="180"
+                Padding="6"
+                CornerRadius="8"
+                Background="#1D1D1D"
+                BorderBrush="#282828"
+                BorderThickness="1"
+                BoxShadow="0 10 30 0 #80000000"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top">
+            <StackPanel>
+                <Button Classes="menuitem" Command="{Binding AddMemberCommand}">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="邀请其他人" VerticalAlignment="Center" />
+                        <Viewbox Grid.Column="1" Width="17" Height="17" VerticalAlignment="Center"><Path Classes="icon" Data="{StaticResource IconPersonPlus}" Stretch="None" Width="24" Height="24" /></Viewbox>
+                    </Grid>
                 </Button>
-            </Grid>
+                <Button Classes="menuitem" Command="{Binding CloseGroupSettingsMenuCommand}">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="开启免打扰" VerticalAlignment="Center" />
+                        <Viewbox Grid.Column="1" Width="17" Height="17" VerticalAlignment="Center"><Path Classes="icon" Data="{StaticResource IconBell}" Stretch="None" Width="24" Height="24" /></Viewbox>
+                    </Grid>
+                </Button>
+                <Button Classes="menuitem" Command="{Binding CloseGroupSettingsMenuCommand}">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="我在本域的昵称" VerticalAlignment="Center" />
+                        <Viewbox Grid.Column="1" Width="17" Height="17" VerticalAlignment="Center"><Path Classes="icon" Data="{StaticResource IconPerson}" Stretch="None" Width="24" Height="24" /></Viewbox>
+                    </Grid>
+                </Button>
+                <Button Classes="menuitem" Command="{Binding CloseGroupSettingsMenuCommand}">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="域设置" VerticalAlignment="Center" />
+                        <Viewbox Grid.Column="1" Width="17" Height="17" VerticalAlignment="Center"><Path Classes="icon" Data="{StaticResource IconSettings}" Stretch="None" Width="24" Height="24" /></Viewbox>
+                    </Grid>
+                </Button>
+                <Button Classes="menuitem" Command="{Binding CreateChannelCommand}">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="创建频道" VerticalAlignment="Center" />
+                        <Viewbox Grid.Column="1" Width="17" Height="17" VerticalAlignment="Center"><Path Classes="icon" Data="{StaticResource IconHash}" Stretch="None" Width="24" Height="24" /></Viewbox>
+                    </Grid>
+                </Button>
+                <Button Classes="menuitem" Command="{Binding CreateCategoryCommand}">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="创建分类" VerticalAlignment="Center" />
+                        <Viewbox Grid.Column="1" Width="17" Height="17" VerticalAlignment="Center"><Path Classes="icon" Data="{StaticResource IconPlusCircle}" Stretch="None" Width="24" Height="24" /></Viewbox>
+                    </Grid>
+                </Button>
+            </StackPanel>
         </Border>
+
+        <!--
+            频道右键菜单(照 Oopz):位置跟鼠标点击点走,由 RoomView.axaml.cs 摆。
+            主页只有 邀请/免打扰/编辑/创建;文字频道多 复制+删除;语音频道把免打扰换成 调度全员到。
+        -->
+        <Border x:Name="ChannelMenu"
+                IsVisible="{Binding IsChannelMenuOpen}"
+                Width="180"
+                Padding="6"
+                CornerRadius="8"
+                Background="#1D1D1D"
+                BorderBrush="#282828"
+                BorderThickness="1"
+                BoxShadow="0 10 30 0 #80000000"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top">
+            <StackPanel>
+                <Button Classes="menuitem" Command="{Binding AddMemberCommand}">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="邀请其他人" VerticalAlignment="Center" />
+                        <Viewbox Grid.Column="1" Width="17" Height="17" VerticalAlignment="Center"><Path Classes="icon" Data="{StaticResource IconPersonPlus}" Stretch="None" Width="24" Height="24" /></Viewbox>
+                    </Grid>
+                </Button>
+                <Button Classes="menuitem" IsVisible="{Binding !ChannelMenuIsVoice}" Command="{Binding CloseChannelMenuCommand}">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="开启免打扰" VerticalAlignment="Center" />
+                        <Viewbox Grid.Column="1" Width="17" Height="17" VerticalAlignment="Center"><Path Classes="icon" Data="{StaticResource IconBell}" Stretch="None" Width="24" Height="24" /></Viewbox>
+                    </Grid>
+                </Button>
+                <Button Classes="menuitem" Command="{Binding CloseChannelMenuCommand}">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="编辑频道" VerticalAlignment="Center" />
+                        <Viewbox Grid.Column="1" Width="17" Height="17" VerticalAlignment="Center"><Path Classes="icon" Data="{StaticResource IconEdit}" Stretch="None" Width="24" Height="24" /></Viewbox>
+                    </Grid>
+                </Button>
+                <Button Classes="menuitem" Command="{Binding CreateChannelCommand}">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="创建频道" VerticalAlignment="Center" />
+                        <Viewbox Grid.Column="1" Width="17" Height="17" VerticalAlignment="Center"><Path Classes="icon" Data="{StaticResource IconHash}" Stretch="None" Width="24" Height="24" /></Viewbox>
+                    </Grid>
+                </Button>
+                <Button Classes="menuitem" IsVisible="{Binding ChannelMenuCanCopyOrDelete}" Command="{Binding CopyChannelCommand}">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="复制频道" VerticalAlignment="Center" />
+                        <Viewbox Grid.Column="1" Width="17" Height="17" VerticalAlignment="Center"><Path Classes="icon" Data="{StaticResource IconCopy}" Stretch="None" Width="24" Height="24" /></Viewbox>
+                    </Grid>
+                </Button>
+                <Button Classes="menuitem" IsVisible="{Binding ChannelMenuIsVoice}" Command="{Binding CloseChannelMenuCommand}">
+                    <Grid ColumnDefinitions="*,Auto,Auto">
+                        <TextBlock Text="调度全员到" VerticalAlignment="Center" />
+                        <Path Grid.Column="2" Classes="icon" Data="{StaticResource IconChevronRight}" Stretch="None" Width="14" Height="14" Margin="6,0,0,0" VerticalAlignment="Center" />
+                    </Grid>
+                </Button>
+                <Button Classes="menuitem" IsVisible="{Binding ChannelMenuCanCopyOrDelete}" Command="{Binding DeleteChannelCommand}">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="删除频道" VerticalAlignment="Center" Foreground="{DynamicResource DangerBrush}" />
+                        <Viewbox Grid.Column="1" Width="17" Height="17" VerticalAlignment="Center"><Path Classes="icon" Stroke="{DynamicResource DangerBrush}" Data="{StaticResource IconTrash}" Stretch="None" Width="24" Height="24" /></Viewbox>
+                    </Grid>
+                </Button>
+            </StackPanel>
+        </Border>
+
     </Grid>
 </UserControl>

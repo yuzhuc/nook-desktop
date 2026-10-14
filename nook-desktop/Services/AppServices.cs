@@ -15,12 +15,16 @@ public sealed class AppServices
         IAudioDeviceService audioDevice,
         IVoiceSessionService voiceSession,
         IChatService chat,
-        ISettingsService settings)
+        ISettingsService settings,
+        IGroupStore groups,
+        AppConfigStore config)
     {
         AudioDevice = audioDevice ?? throw new ArgumentNullException(nameof(audioDevice));
         VoiceSession = voiceSession ?? throw new ArgumentNullException(nameof(voiceSession));
         Chat = chat ?? throw new ArgumentNullException(nameof(chat));
         Settings = settings ?? throw new ArgumentNullException(nameof(settings));
+        Groups = groups ?? throw new ArgumentNullException(nameof(groups));
+        Config = config ?? throw new ArgumentNullException(nameof(config));
     }
 
     public IAudioDeviceService AudioDevice { get; }
@@ -31,13 +35,25 @@ public sealed class AppServices
 
     public ISettingsService Settings { get; }
 
+    public IGroupStore Groups { get; }
+
+    public AppConfigStore Config { get; }
+
     /// <summary>
-    /// 默认装配:目前全部使用本地占位实现。
+    /// 默认装配:群组走 SQLite 本地库,其余仍是本地占位实现。
     /// 接入真实后端时,只需要替换这里的构造参数,ViewModel 层不用动。
     /// </summary>
-    public static AppServices CreateDefault() => new(
-        new PlaceholderAudioDeviceService(),
-        new PlaceholderVoiceSessionService(),
-        new PlaceholderChatService(),
-        new PlaceholderSettingsService());
+    public static AppServices CreateDefault()
+    {
+        // 聊天消息和群组/频道共用同一个 SQLite 库,所以先建库再注入
+        var groups = new SqliteGroupStore();
+
+        return new(
+            new PlaceholderAudioDeviceService(),
+            new PlaceholderVoiceSessionService(),
+            new SqliteChatService(groups),
+            new PlaceholderSettingsService(),
+            groups,
+            new AppConfigStore());
+    }
 }

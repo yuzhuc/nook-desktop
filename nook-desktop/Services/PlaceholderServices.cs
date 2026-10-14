@@ -122,46 +122,6 @@ public sealed class PlaceholderVoiceSessionService : IVoiceSessionService
     }
 }
 
-public sealed class PlaceholderChatService : IChatService
-{
-    private readonly List<ChatMessage> _history = new();
-
-    public event EventHandler<ChatMessage>? MessageReceived;
-
-    public IReadOnlyList<ChatMessage> GetHistory(string channelId, int take = 50)
-    {
-        var result = new List<ChatMessage>();
-        for (var i = _history.Count - 1; i >= 0 && result.Count < take; i--)
-        {
-            if (_history[i].ChannelId == channelId)
-            {
-                result.Insert(0, _history[i]);
-            }
-        }
-
-        return result;
-    }
-
-    public Task SendAsync(string channelId, string content, CancellationToken cancellationToken = default)
-    {
-        if (string.IsNullOrWhiteSpace(content))
-        {
-            return Task.CompletedTask;
-        }
-
-        var message = new ChatMessage(
-            Guid.NewGuid().ToString("N"),
-            channelId,
-            "self",
-            "nook 用户",
-            content,
-            DateTimeOffset.Now);
-
-        _history.Add(message);
-        MessageReceived?.Invoke(this, message);
-        return Task.CompletedTask;
-    }
-}
 
 public sealed class PlaceholderSettingsService : ISettingsService
 {
