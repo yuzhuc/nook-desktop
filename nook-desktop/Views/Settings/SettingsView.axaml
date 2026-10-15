@@ -133,6 +133,13 @@
                             <TextBlock Text="帮助反馈" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
+
+                    <Button Classes="listitem" HorizontalContentAlignment="Left">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Path Classes="icon" Data="{StaticResource IconClose}" Stroke="{DynamicResource DangerBrush}" Width="16" Height="16" VerticalAlignment="Center" />
+                            <TextBlock Text="退出登录" Foreground="{DynamicResource DangerBrush}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
                 </ScrollViewer>
 
@@ -283,6 +290,40 @@
                         <Border Classes="divider" />
                     </StackPanel>
                 </StackPanel>
+                <!-- 外观设置 -->
+                <StackPanel Spacing="16" IsVisible="{Binding IsAppearanceSection}">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Path Classes="icon" Data="{StaticResource IconTag}" Width="18" Height="18" VerticalAlignment="Center" />
+                        <TextBlock Classes="h1" Text="外观设置" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <TextBlock Classes="h2" Text="外观设置" />
+                    <Border Classes="panel" Padding="18,16">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <StackPanel Spacing="10">
+                                <TextBlock Classes="h2" Text="深色主题" />
+                                <TextBlock Classes="caption" Text="沉浸式暗夜主题 打造帅气的语音体验" />
+                                <Button Classes="secondary" Content="当前主题" />
+                            </StackPanel>
+                            <Border Grid.Column="1" Width="150" Height="90" CornerRadius="10"
+                                    Background="{DynamicResource SurfaceHoverBrush}"
+                                    BorderBrush="{DynamicResource BorderStrongBrush}" BorderThickness="1">
+                                <TextBlock Text="✓" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                                           Margin="0,0,10,8" Foreground="{DynamicResource AccentBrush}" />
+                            </Border>
+                        </Grid>
+                    </Border>
+                    <Border Classes="panel" Padding="18,16">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <StackPanel Spacing="10">
+                                <TextBlock Classes="h2" Text="浅色主题" />
+                                <TextBlock Classes="caption" Text="轻盈的亮色主题 更清晰的阅读体验" />
+                                <Button Classes="primary" Content="切换主题" />
+                            </StackPanel>
+                            <Border Grid.Column="1" Width="150" Height="90" CornerRadius="10" Background="#F2F3F7" />
+                        </Grid>
+                    </Border>
+                </StackPanel>
+
                 <!-- 其余分栏先摆空状态 -->
                 <StackPanel Spacing="18" IsVisible="{Binding IsPlaceholderSection}">
                     <TextBlock Classes="h1" Text="暂未实现" />

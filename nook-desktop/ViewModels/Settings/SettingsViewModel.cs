@@ -109,7 +109,7 @@ public sealed class SettingsViewModel : ViewModelBase
 
 
     public bool IsPlaceholderSection =>
-        !IsAccountSection && !IsVoiceSection;
+        !IsAccountSection && !IsVoiceSection && !IsAppearanceSection;
 
     /// <summary>OOPZ 设置页左下角那行版本号。</summary>
     public string VersionText => "v1.0.0";
