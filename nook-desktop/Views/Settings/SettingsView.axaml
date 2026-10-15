@@ -147,8 +147,8 @@
             </Grid>
         </Border>
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Column="1" Padding="32,22,32,32" HorizontalScrollBarVisibility="Disabled">
-            <StackPanel Spacing="24">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Column="1" Padding="40,22,40,32" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Width="566" HorizontalAlignment="Left" Spacing="24">
 
                 <!-- 账号设置 -->
                 <StackPanel Spacing="20" IsVisible="{Binding IsAccountSection}">
@@ -297,280 +297,472 @@
                         <TextBlock Classes="h1" Text="外观设置" VerticalAlignment="Center" />
                     </StackPanel>
                     <TextBlock Classes="h2" Text="外观设置" />
-                    <Border Classes="panel" Padding="18,16">
-                        <Grid ColumnDefinitions="*,Auto">
-                            <StackPanel Spacing="10">
+
+                    <Border Classes="panel" Padding="16,14">
+                        <Grid ColumnDefinitions="*,150">
+                            <StackPanel Spacing="12">
                                 <TextBlock Classes="h2" Text="深色主题" />
                                 <TextBlock Classes="caption" Text="沉浸式暗夜主题 打造帅气的语音体验" />
-                                <Button Classes="secondary" Content="当前主题" />
+                                <Button Classes="secondary" Content="当前主题" HorizontalAlignment="Left" MinWidth="76" />
                             </StackPanel>
-                            <Border Grid.Column="1" Width="150" Height="90" CornerRadius="10"
-                                    Background="{DynamicResource SurfaceHoverBrush}"
-                                    BorderBrush="{DynamicResource BorderStrongBrush}" BorderThickness="1">
-                                <TextBlock Text="✓" HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                                           Margin="0,0,10,8" Foreground="{DynamicResource AccentBrush}" />
+                            <Border Grid.Column="1" Width="150" Height="95" CornerRadius="10" Background="#343434" Padding="8">
+                                <Grid>
+                                    <Border Background="#242424" CornerRadius="7" />
+                                    <Ellipse Width="24" Height="24" Fill="#B5B5B5" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="16,0,0,0" />
+                                    <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center" Margin="52,0,0,0" Spacing="5">
+                                        <Border Width="42" Height="5" CornerRadius="3" Background="#9A9A9A" HorizontalAlignment="Left" />
+                                        <Border Width="42" Height="5" CornerRadius="3" Background="#9A9A9A" HorizontalAlignment="Left" />
+                                    </StackPanel>
+                                    <Border Width="18" Height="18" CornerRadius="9" Background="{DynamicResource AccentBrush}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,7,7">
+                                        <TextBlock Text="✓" FontSize="11" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+                                </Grid>
                             </Border>
                         </Grid>
                     </Border>
-                    <Border Classes="panel" Padding="18,16">
-                        <Grid ColumnDefinitions="*,Auto">
-                            <StackPanel Spacing="10">
+
+                    <Border Classes="panel" Padding="16,14">
+                        <Grid ColumnDefinitions="*,150">
+                            <StackPanel Spacing="12">
                                 <TextBlock Classes="h2" Text="浅色主题" />
                                 <TextBlock Classes="caption" Text="轻盈的亮色主题 更清晰的阅读体验" />
-                                <Button Classes="primary" Content="切换主题" />
+                                <Button Classes="primary" Content="切换主题" HorizontalAlignment="Left" MinWidth="76" />
                             </StackPanel>
-                            <Border Grid.Column="1" Width="150" Height="90" CornerRadius="10" Background="#F2F3F7" />
+                            <Border Grid.Column="1" Width="150" Height="95" CornerRadius="10" Background="#E7E8EF" Padding="8">
+                                <Border Background="#F7F7FA" CornerRadius="7">
+                                    <Grid>
+                                        <Ellipse Width="24" Height="24" Fill="#D2D3D9" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="16,0,0,0" />
+                                        <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center" Margin="52,0,0,0" Spacing="5">
+                                            <Border Width="42" Height="5" CornerRadius="3" Background="#D2D3D9" HorizontalAlignment="Left" />
+                                            <Border Width="42" Height="5" CornerRadius="3" Background="#D2D3D9" HorizontalAlignment="Left" />
+                                        </StackPanel>
+                                        <Ellipse Width="16" Height="16" Fill="#D2D3D9" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,8,8" />
+                                    </Grid>
+                                </Border>
+                            </Border>
                         </Grid>
                     </Border>
                 </StackPanel>
 
 
                 <StackPanel Spacing="16" IsVisible="{Binding IsPrivacySection}">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <Path Classes="icon" Data="{StaticResource IconSettings}" Width="18" Height="18" VerticalAlignment="Center" />
-                        <TextBlock Classes="h1" Text="隐私设置" VerticalAlignment="Center" />
-                    </StackPanel>
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="谁可以私信我" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="所有人" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="允许通过 ID 搜索到我" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="开" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="显示在线状态" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="开" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="好友请求" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="允许" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="黑名单管理" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                <Path Classes="icon" Data="{StaticResource IconSettings}" Width="18" Height="18" VerticalAlignment="Center" />
+                <TextBlock Classes="h1" Text="隐私设置" VerticalAlignment="Center" />
+                </StackPanel>
+                
+                <StackPanel Spacing="24">
+                <StackPanel Spacing="18">
+                <TextBlock Classes="h2" Text="私信" />
+                <Grid ColumnDefinitions="*,Auto" Height="32">
+                <TextBlock Text="允许非好友向你发送私信" VerticalAlignment="Center" />
+                <ToggleSwitch Grid.Column="1" IsChecked="True" HorizontalAlignment="Right" />
+                </Grid>
+                </StackPanel>
+                
+                <StackPanel Spacing="18">
+                <TextBlock Classes="h2" Text="谁可以把你添加为好友" />
+                <Grid ColumnDefinitions="*,Auto" Height="32">
+                <TextBlock Text="所有人" VerticalAlignment="Center" />
+                <ToggleSwitch Grid.Column="1" IsChecked="True" HorizontalAlignment="Right" />
+                </Grid>
+                <Grid ColumnDefinitions="*,Auto" Height="32">
+                <TextBlock Text="好友的好友" VerticalAlignment="Center" />
+                <ToggleSwitch Grid.Column="1" IsChecked="True" HorizontalAlignment="Right" />
+                </Grid>
+                <Grid ColumnDefinitions="*,Auto" Height="32">
+                <TextBlock Text="域成员" VerticalAlignment="Center" />
+                <ToggleSwitch Grid.Column="1" IsChecked="True" HorizontalAlignment="Right" />
+                </Grid>
+                </StackPanel>
+                
+                <StackPanel Orientation="Horizontal" Spacing="0" Margin="0,8,0,0">
+                <TextBlock Text="点击查看我们的 " VerticalAlignment="Center" />
+                <TextBlock Text="用户协议" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" />
+                <TextBlock Text=" 和 " VerticalAlignment="Center" />
+                <TextBlock Text="隐私政策" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" />
+                </StackPanel>
+                </StackPanel>
                 </StackPanel>
 
                 <StackPanel Spacing="16" IsVisible="{Binding IsKeyboardSection}">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <Path Classes="icon" Data="{StaticResource IconList}" Width="18" Height="18" VerticalAlignment="Center" />
-                        <TextBlock Classes="h1" Text="按键设置" VerticalAlignment="Center" />
-                    </StackPanel>
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="按键说话" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="F2" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="麦克风开启/关闭" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="F2" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="耳机静音" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="F3" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="切换频道" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="F4" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="截图" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="Alt+S" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                <Path Classes="icon" Data="{StaticResource IconList}" Width="18" Height="18" VerticalAlignment="Center" />
+                <TextBlock Classes="h1" Text="按键设置" VerticalAlignment="Center" />
+                </StackPanel>
+                
+                <StackPanel Spacing="28">
+                <StackPanel Spacing="18">
+                <TextBlock Classes="h2" Text="语音快捷键" />
+                <StackPanel Spacing="18">
+                <StackPanel>
+                <TextBlock Text="按键说话" />
+                <TextBlock Classes="caption" Text="F2" Margin="0,14,0,0" />
+                <Border Classes="divider" Margin="0,18,0,0" />
+                </StackPanel>
+                <StackPanel>
+                <TextBlock Text="麦克风开启/关闭" />
+                <TextBlock Classes="caption" Text="未设置" Margin="0,14,0,0" />
+                <Border Classes="divider" Margin="0,18,0,0" />
+                </StackPanel>
+                <StackPanel>
+                <TextBlock Text="扬声器开启/关闭" />
+                <TextBlock Classes="caption" Text="未设置" Margin="0,14,0,0" />
+                <Border Classes="divider" Margin="0,18,0,0" />
+                </StackPanel>
+                <StackPanel>
+                <TextBlock Text="自由发言/按键说话" />
+                <TextBlock Classes="caption" Text="未设置" Margin="0,14,0,0" />
+                <Border Classes="divider" Margin="0,18,0,0" />
+                </StackPanel>
+                </StackPanel>
+                </StackPanel>
+                
+                <StackPanel Spacing="18">
+                <TextBlock Classes="h2" Text="截图快捷键" />
+                <StackPanel>
+                <TextBlock Text="开启截图" />
+                <TextBlock Classes="caption" Text="未设置" Margin="0,14,0,0" />
+                <Border Classes="divider" Margin="0,18,0,0" />
+                </StackPanel>
+                </StackPanel>
+                
+                <StackPanel Spacing="18">
+                <TextBlock Classes="h2" Text="屏幕覆盖快捷键" />
+                <StackPanel>
+                <TextBlock Text="屏幕覆盖开启/关闭" />
+                <TextBlock Classes="caption" Text="未设置" Margin="0,14,0,0" />
+                <Border Classes="divider" Margin="0,18,0,0" />
+                </StackPanel>
+                </StackPanel>
+                </StackPanel>
                 </StackPanel>
 
                 <StackPanel Spacing="16" IsVisible="{Binding IsNotifySection}">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <Path Classes="icon" Data="{StaticResource IconBell}" Width="18" Height="18" VerticalAlignment="Center" />
-                        <TextBlock Classes="h1" Text="通知设置" VerticalAlignment="Center" />
-                    </StackPanel>
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="桌面通知" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="开" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="消息声音" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="开" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="语音邀请提醒" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="开" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="免打扰时间段" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="22:00 - 08:00" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                <Path Classes="icon" Data="{StaticResource IconBell}" Width="18" Height="18" VerticalAlignment="Center" />
+                <TextBlock Classes="h1" Text="通知设置" VerticalAlignment="Center" />
+                </StackPanel>
+                
+                <StackPanel Spacing="26">
+                <StackPanel Spacing="18">
+                <TextBlock Classes="h2" Text="提示音量" />
+                <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Text="音量调节" VerticalAlignment="Center" />
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12">
+                <Path Classes="icon" Data="{StaticResource IconHeadphones}" Width="16" Height="16" VerticalAlignment="Center" />
+                <Slider Minimum="0" Maximum="100" Width="120" Value="60" />
+                </StackPanel>
+                </Grid>
+                </StackPanel>
+                
+                <StackPanel Spacing="18">
+                <TextBlock Classes="h2" Text="私信提示音" />
+                <Grid ColumnDefinitions="*,Auto" Height="32">
+                <TextBlock Text="私信消息" VerticalAlignment="Center" />
+                <ToggleSwitch Grid.Column="1" IsChecked="True" HorizontalAlignment="Right" />
+                </Grid>
+                </StackPanel>
+                
+                <StackPanel Spacing="18">
+                <TextBlock Classes="h2" Text="耳机与麦克风" />
+                <Grid ColumnDefinitions="*,Auto" Height="32">
+                <TextBlock Text="耳机静音" VerticalAlignment="Center" />
+                <ToggleSwitch Grid.Column="1" IsChecked="True" HorizontalAlignment="Right" />
+                </Grid>
+                <Grid ColumnDefinitions="*,Auto" Height="32">
+                <TextBlock Text="取消耳机静音" VerticalAlignment="Center" />
+                <ToggleSwitch Grid.Column="1" IsChecked="True" HorizontalAlignment="Right" />
+                </Grid>
+                <Grid ColumnDefinitions="*,Auto" Height="32">
+                <TextBlock Text="麦克风静音" VerticalAlignment="Center" />
+                <ToggleSwitch Grid.Column="1" IsChecked="True" HorizontalAlignment="Right" />
+                </Grid>
+                <Grid ColumnDefinitions="*,Auto" Height="32">
+                <TextBlock Text="取消麦克风静音" VerticalAlignment="Center" />
+                <ToggleSwitch Grid.Column="1" IsChecked="True" HorizontalAlignment="Right" />
+                </Grid>
+                </StackPanel>
+                
+                <StackPanel Spacing="18">
+                <TextBlock Classes="h2" Text="语音音效" />
+                <Grid ColumnDefinitions="*,Auto" Height="32">
+                <TextBlock Text="进入语音频道" VerticalAlignment="Center" />
+                <ToggleSwitch Grid.Column="1" IsChecked="True" HorizontalAlignment="Right" />
+                </Grid>
+                <Grid ColumnDefinitions="*,Auto" Height="32">
+                <TextBlock Text="离开语音频道" VerticalAlignment="Center" />
+                <ToggleSwitch Grid.Column="1" IsChecked="True" HorizontalAlignment="Right" />
+                </Grid>
+                <Grid ColumnDefinitions="*,Auto" Height="32">
+                <TextBlock Text="其他用户连接" VerticalAlignment="Center" />
+                <ToggleSwitch Grid.Column="1" IsChecked="True" HorizontalAlignment="Right" />
+                </Grid>
+                <Grid ColumnDefinitions="*,Auto" Height="32">
+                <TextBlock Text="其他用户离开" VerticalAlignment="Center" />
+                <ToggleSwitch Grid.Column="1" IsChecked="True" HorizontalAlignment="Right" />
+                </Grid>
+                <Grid ColumnDefinitions="*,Auto" Height="32">
+                <TextBlock Text="语音频道互动音效" VerticalAlignment="Center" />
+                <ToggleSwitch Grid.Column="1" IsChecked="True" HorizontalAlignment="Right" />
+                </Grid>
+                </StackPanel>
+                
+                <StackPanel Spacing="18">
+                <TextBlock Classes="h2" Text="主播模式提示音" />
+                <Grid ColumnDefinitions="*,Auto" Height="32">
+                <TextBlock Text="开启主播模式" VerticalAlignment="Center" />
+                <ToggleSwitch Grid.Column="1" IsChecked="True" HorizontalAlignment="Right" />
+                </Grid>
+                <Grid ColumnDefinitions="*,Auto" Height="32">
+                <TextBlock Text="新进入的用户被静音" VerticalAlignment="Center" />
+                <ToggleSwitch Grid.Column="1" IsChecked="True" HorizontalAlignment="Right" />
+                </Grid>
+                </StackPanel>
+                </StackPanel>
                 </StackPanel>
 
                 <StackPanel Spacing="16" IsVisible="{Binding IsOverlaySection}">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <Path Classes="icon" Data="{StaticResource IconScreen}" Width="18" Height="18" VerticalAlignment="Center" />
-                        <TextBlock Classes="h1" Text="屏幕覆盖" VerticalAlignment="Center" />
-                    </StackPanel>
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="屏幕覆盖" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="开" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="显示成员头像" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="开" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="说话时高亮" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="开" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="覆盖位置" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="右上角" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                <Path Classes="icon" Data="{StaticResource IconScreen}" Width="18" Height="18" VerticalAlignment="Center" />
+                <TextBlock Classes="h1" Text="屏幕覆盖" VerticalAlignment="Center" />
+                </StackPanel>
+                
+                <StackPanel Spacing="28">
+                <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Spacing="10">
+                <TextBlock Classes="h2" Text="开启屏幕覆盖" />
+                <TextBlock Classes="caption" Text="允许在屏幕最上方显示正在说话的用户，可能需要管理员权限&#10;进入语音频道后才会显示屏幕覆盖窗口" TextWrapping="Wrap" />
+                </StackPanel>
+                <ToggleSwitch Grid.Column="1" IsChecked="False" HorizontalAlignment="Right" VerticalAlignment="Top" />
+                </Grid>
+                
+                <StackPanel Spacing="10">
+                <TextBlock Text="快捷键开启/关闭屏幕覆盖" />
+                <TextBlock Classes="caption" Text="未设置" />
+                <Border Classes="divider" Margin="0,8,0,0" />
+                </StackPanel>
+                
+                <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Spacing="10">
+                <TextBlock Classes="h2" Text="开启编辑模式" />
+                <TextBlock Classes="caption" Text="开启后，可以直接调整屏幕覆盖窗口的尺寸和位置" TextWrapping="Wrap" />
+                </StackPanel>
+                <ToggleSwitch Grid.Column="1" IsChecked="False" HorizontalAlignment="Right" VerticalAlignment="Top" />
+                </Grid>
+                
+                <StackPanel Spacing="16">
+                <TextBlock Classes="h2" Text="显示设置" />
+                <StackPanel Orientation="Horizontal" Spacing="38">
+                <RadioButton GroupName="overlayDisplay" IsChecked="True" Content="显示所有用户" />
+                <RadioButton GroupName="overlayDisplay" IsChecked="False" Content="只显示正在说话的用户" />
+                </StackPanel>
+                </StackPanel>
+                
+                <StackPanel Spacing="14">
+                <TextBlock Classes="h2" Text="常见问题" />
+                <TextBlock Text="屏幕覆盖窗口不显示，或者无法覆盖到游戏画面上面" FontWeight="SemiBold" />
+                <TextBlock Text="1. 检查本页面顶部第一个模块【开启屏幕覆盖】，确保开关已开启" TextWrapping="Wrap" />
+                <TextBlock Text="2. 关闭客户端，右键 Oopz 启动图标，点击【以管理员身份运行】" TextWrapping="Wrap" />
+                <TextBlock Text="3. 检查游戏的显示设置，将游戏设置为【无边框全屏】" TextWrapping="Wrap" />
+                <TextBlock Text="开启/关闭屏幕覆盖的快捷键无效" FontWeight="SemiBold" Margin="0,6,0,0" />
+                <TextBlock Text="关闭客户端，右键 Oopz 启动图标，点击【以管理员身份运行】" TextWrapping="Wrap" />
+                </StackPanel>
+                </StackPanel>
                 </StackPanel>
 
                 <StackPanel Spacing="16" IsVisible="{Binding IsBoostSection}">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <Path Classes="icon" Data="{StaticResource IconExpand}" Width="18" Height="18" VerticalAlignment="Center" />
-                        <TextBlock Classes="h1" Text="全球加速" VerticalAlignment="Center" />
-                    </StackPanel>
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="加速状态" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="未加速" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="加速节点" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="自动选择" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="启动时自动加速" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="开" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="加速模式" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="智能模式" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                <Path Classes="icon" Data="{StaticResource IconExpand}" Width="18" Height="18" VerticalAlignment="Center" />
+                <TextBlock Classes="h1" Text="全球加速" VerticalAlignment="Center" />
+                </StackPanel>
+                
+                <StackPanel Spacing="12">
+                <TextBlock Classes="h2" Text="已为你开启校园网及海外加速" />
+                <TextBlock Text="有效改善跨地区网络卡顿、跨运营商、校园网的访问质量问题。" TextWrapping="Wrap" />
+                <StackPanel Orientation="Horizontal" Spacing="0">
+                <TextBlock Classes="caption" Text="注:本服务仅加速 Oopz，如需加速游戏请使用 " />
+                <TextBlock Classes="caption" Text="游戏加速器 &gt;" Foreground="{DynamicResource AccentBrush}" />
+                </StackPanel>
+                </StackPanel>
+                
+                <StackPanel Spacing="18">
+                <TextBlock Classes="h2" Text="功能优势" />
+                <StackPanel Spacing="12">
+                <TextBlock Text="全球覆盖，专属线路" FontWeight="SemiBold" />
+                <TextBlock Text="1. 3200+加速节点，覆盖70+国家与地区，为您提供全球范围内的高效连接。" TextWrapping="Wrap" />
+                <TextBlock Text="2. 专属优化加速线路，保障低延迟、高可靠性。" TextWrapping="Wrap" />
+                </StackPanel>
+                <StackPanel Spacing="12">
+                <TextBlock Text="海外优化，畅享体验" FontWeight="SemiBold" />
+                <TextBlock Text="1. 针对海外用户的卡顿问题深度优化。" TextWrapping="Wrap" />
+                <TextBlock Text="2. 确保跨境访问的快速稳定，减少延迟与中断。" TextWrapping="Wrap" />
+                <TextBlock Text="3. 让您的网络连接更加流畅稳定，满足多种场景需求。" TextWrapping="Wrap" />
+                </StackPanel>
+                </StackPanel>
                 </StackPanel>
 
                 <StackPanel Spacing="16" IsVisible="{Binding IsStreamerSection}">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <Path Classes="icon" Data="{StaticResource IconMic}" Width="18" Height="18" VerticalAlignment="Center" />
-                        <TextBlock Classes="h1" Text="主播模式" VerticalAlignment="Center" />
-                    </StackPanel>
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="主播模式" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="关" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="隐藏加入语音的提示" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="开" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="屏蔽陌生人私信" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="开" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="快捷键提示" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="开" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                <Path Classes="icon" Data="{StaticResource IconMic}" Width="18" Height="18" VerticalAlignment="Center" />
+                <TextBlock Classes="h1" Text="主播模式" VerticalAlignment="Center" />
+                </StackPanel>
+                
+                <StackPanel Spacing="22">
+                <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Classes="h2" Text="智能防护" />
+                <TextBlock Grid.Column="1" Classes="caption" Text="已生效" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" />
+                </Grid>
+                <TextBlock Text="智能防护是一种被动防护措施，当你在非私密频道开启直播时，我们将智能守护你的直播环境。当检测到高风险的账号（例如首次使用 Oopz 的账号）加入你的频道后，TA 对你的音量将被自动关闭。" TextWrapping="Wrap" />
+                
+                <Grid ColumnDefinitions="*,Auto" Margin="0,4,0,0">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                <TextBlock Classes="h2" Text="开启主播模式" />
+                <Path Classes="icon" Data="{StaticResource IconInfo}" Width="12" Height="12" VerticalAlignment="Center" />
+                </StackPanel>
+                <ToggleSwitch Grid.Column="1" IsChecked="False" HorizontalAlignment="Right" />
+                </Grid>
+                <TextBlock Text="主播模式开启后，语音频道内的所有用户，TA 对你的音量都将被自动关闭。该设置只对你生效，不影响频道内其余用户的正常通话。如果你信任某个用户可以通过手动恢复其音量。" TextWrapping="Wrap" />
+                </StackPanel>
                 </StackPanel>
 
                 <StackPanel Spacing="16" IsVisible="{Binding IsChangelogSection}">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <Path Classes="icon" Data="{StaticResource IconDocUp}" Width="18" Height="18" VerticalAlignment="Center" />
-                        <TextBlock Classes="h1" Text="更新记录" VerticalAlignment="Center" />
-                    </StackPanel>
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="v1.4.6" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="2026.10.13" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="优化语音连接稳定性" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="2026.09.28" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="新增屏幕覆盖功能" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="2026.09.10" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                <Path Classes="icon" Data="{StaticResource IconDocUp}" Width="18" Height="18" VerticalAlignment="Center" />
+                <TextBlock Classes="h1" Text="更新记录" VerticalAlignment="Center" />
+                </StackPanel>
+                
+                <StackPanel Spacing="12" Margin="0,8,0,0">
+                <TextBlock Text="2026年" FontSize="16" />
+                <StackPanel Spacing="26">
+                <Grid ColumnDefinitions="52,1,*">
+                <TextBlock Text="08-25" Margin="0,2,0,0" VerticalAlignment="Top" />
+                <Border Grid.Column="1" Classes="divider" Width="1" Height="NaN" Margin="0,2,0,2" />
+                <StackPanel Grid.Column="2" Margin="24,0,0,0" Spacing="12">
+                <TextBlock Classes="h2" Text="版本更新 v1.4.6" />
+                <StackPanel Spacing="8">
+                <TextBlock FontWeight="SemiBold" Text="改动：" />
+                <TextBlock Text="•  娱乐派对全新升级，游戏CP等你探索；" TextWrapping="Wrap" />
+                <TextBlock Text="•  语音厅小时榜上线，冲榜解锁更多曝光。" TextWrapping="Wrap" />
+                <TextBlock FontWeight="SemiBold" Text="修复：" Margin="0,4,0,0" />
+                <TextBlock Text="•  修复一些已知问题。" TextWrapping="Wrap" />
+                </StackPanel>
+                </StackPanel>
+                </Grid>
+                
+                <Grid ColumnDefinitions="52,1,*">
+                <TextBlock Text="08-14" Margin="0,2,0,0" VerticalAlignment="Top" />
+                <Border Grid.Column="1" Classes="divider" Width="1" Height="NaN" Margin="0,2,0,2" />
+                <StackPanel Grid.Column="2" Margin="24,0,0,0" Spacing="12">
+                <TextBlock Classes="h2" Text="版本更新 v1.4.5" />
+                <StackPanel Spacing="8">
+                <TextBlock FontWeight="SemiBold" Text="改动：" />
+                <TextBlock Text="•  陪玩专区新增个性化一键匹配；" TextWrapping="Wrap" />
+                <TextBlock Text="•  签到抽奖活动重磅升级。" TextWrapping="Wrap" />
+                <TextBlock FontWeight="SemiBold" Text="修复：" Margin="0,4,0,0" />
+                <TextBlock Text="•  修复一些已知问题。" TextWrapping="Wrap" />
+                </StackPanel>
+                </StackPanel>
+                </Grid>
+                
+                <Grid ColumnDefinitions="52,1,*">
+                <TextBlock Text="08-05" Margin="0,2,0,0" VerticalAlignment="Top" />
+                <Border Grid.Column="1" Classes="divider" Width="1" Height="NaN" Margin="0,2,0,2" />
+                <StackPanel Grid.Column="2" Margin="24,0,0,0" Spacing="12">
+                <TextBlock Classes="h2" Text="版本更新 v1.4.4" />
+                <StackPanel Spacing="8">
+                <TextBlock FontWeight="SemiBold" Text="改动：" />
+                <TextBlock Text="•  电竞陪玩节上线，领取陪玩券福利；" TextWrapping="Wrap" />
+                <TextBlock Text="•  新增商品链接分享至域内和私信功能；" TextWrapping="Wrap" />
+                <TextBlock Text="•  语音厅个性化装扮场景升级；" TextWrapping="Wrap" />
+                <TextBlock Text="•  优化语音厅盲盒礼物赠礼体验；" TextWrapping="Wrap" />
+                <TextBlock Text="•  充值点券计入无限公民会员成长值。" TextWrapping="Wrap" />
+                <TextBlock FontWeight="SemiBold" Text="修复：" Margin="0,4,0,0" />
+                <TextBlock Text="•  修复一些已知问题。" TextWrapping="Wrap" />
+                </StackPanel>
+                </StackPanel>
+                </Grid>
+                
+                <Grid ColumnDefinitions="52,1,*">
+                <TextBlock Text="09-05" Margin="0,2,0,0" VerticalAlignment="Top" />
+                <Border Grid.Column="1" Classes="divider" Width="1" Height="NaN" Margin="0,2,0,2" />
+                <StackPanel Grid.Column="2" Margin="24,0,0,0" Spacing="12">
+                <TextBlock Classes="h2" Text="写在公测前：有趣的语音软件自己会说话" />
+                <StackPanel Spacing="8">
+                <TextBlock Text="“更高的语音质量、更低的延迟、更简易美观的 UI”这些老生常谈的内容相信大家早已耳熟能详" TextWrapping="Wrap" />
+                <TextBlock Text="Oopz 想表达的不仅仅这些：" TextWrapping="Wrap" />
+                <TextBlock Text="•  想让每个玩家获得更沉浸的开黑体验，在张弛有度中体验游戏乐趣" TextWrapping="Wrap" />
+                <TextBlock Text="•  想让每个玩家在有限的游戏过程中获得更有趣的交互体验" TextWrapping="Wrap" />
+                <TextBlock Text="•  想让每个玩家都能在开黑过程中收获别具一格的情感体验" TextWrapping="Wrap" />
+                <TextBlock Text="•  想让每个玩家都能拥有志同道合的开黑搭子" TextWrapping="Wrap" />
+                <TextBlock Text="•  ..." TextWrapping="Wrap" />
+                <TextBlock Text="我们的最终目的不仅仅是娱乐，而是成为玩家之间传递思想交互的纽带，构建可持续的情感体验和游戏方式" TextWrapping="Wrap" Margin="0,4,0,0" />
+                <TextBlock Text="其实想说的都写进产品中了，相信热爱游戏热爱开黑的你们一定能感受到" TextWrapping="Wrap" />
+                <TextBlock Text="Oopz~期待可以带给大家不一样的体验！🎉🎉" TextWrapping="Wrap" />
+                </StackPanel>
+                </StackPanel>
+                </Grid>
+                </StackPanel>
+                </StackPanel>
                 </StackPanel>
 
                 <StackPanel Spacing="16" IsVisible="{Binding IsSystemSection}">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <Path Classes="icon" Data="{StaticResource IconSettings}" Width="18" Height="18" VerticalAlignment="Center" />
-                        <TextBlock Classes="h1" Text="系统设置" VerticalAlignment="Center" />
-                    </StackPanel>
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="开机自动启动" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="开" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="关闭主窗口时最小化到托盘" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="开" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="语言" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="简体中文" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="缓存占用" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="128 MB" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                <Path Classes="icon" Data="{StaticResource IconSettings}" Width="18" Height="18" VerticalAlignment="Center" />
+                <TextBlock Classes="h1" Text="系统设置" VerticalAlignment="Center" />
+                </StackPanel>
+                
+                <StackPanel Spacing="18">
+                <TextBlock Classes="h2" Text="通用" />
+                <Grid ColumnDefinitions="*,Auto" Height="30">
+                <TextBlock Text="开机自动启动" VerticalAlignment="Center" />
+                <ToggleSwitch Grid.Column="1" IsChecked="False" HorizontalAlignment="Right" />
+                </Grid>
+                <Grid ColumnDefinitions="*,Auto" Height="30">
+                <TextBlock Text="关闭时最小化到托盘" VerticalAlignment="Center" />
+                <ToggleSwitch Grid.Column="1" IsChecked="True" HorizontalAlignment="Right" />
+                </Grid>
+                </StackPanel>
                 </StackPanel>
 
                 <StackPanel Spacing="16" IsVisible="{Binding IsSupportSection}">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <Path Classes="icon" Data="{StaticResource IconHeadphones}" Width="18" Height="18" VerticalAlignment="Center" />
-                        <TextBlock Classes="h1" Text="帮助反馈" VerticalAlignment="Center" />
-                    </StackPanel>
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="意见反馈" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="问题排查" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="查看日志" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="版本号" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="caption" Text="v1.0.0" VerticalAlignment="Center" />
-                    </Grid>
-                    <Border Classes="divider" />
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                <Path Classes="icon" Data="{StaticResource IconHeadphones}" Width="18" Height="18" VerticalAlignment="Center" />
+                <TextBlock Classes="h1" Text="帮助反馈" VerticalAlignment="Center" />
+                </StackPanel>
+                
+                <StackPanel Spacing="26">
+                <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Spacing="12">
+                <TextBlock Classes="h2" Text="用户体验改善计划" />
+                <TextBlock Text="为帮助我们知悉你使用 Oopz 软件期间所遭遇的问题，我们恳切邀请你上报系统日志信息，以便我们优化软件质量，提高你的使用体验。" TextWrapping="Wrap" />
+                </StackPanel>
+                <Button Grid.Column="1" Classes="listitem" Padding="0" MinHeight="0"
+                VerticalAlignment="Top" Margin="20,4,0,0">
+                <TextBlock Text="上传日志" Foreground="{DynamicResource TextMutedBrush}" />
+                </Button>
+                </Grid>
+                
+                <StackPanel Spacing="20">
+                <TextBlock Classes="h2" Text="帮助与客服" />
+                
+                <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Text="你可以在帮助中心查看常见问题的解决方法。" TextWrapping="Wrap" />
+                <Button Grid.Column="1" Classes="listitem" Padding="0" MinHeight="0"
+                VerticalAlignment="Top" Margin="20,0,0,0">
+                <TextBlock Text="帮助中心" Foreground="{DynamicResource TextMutedBrush}" />
+                </Button>
+                </Grid>
+                
+                <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Text="若你未能通过帮助中心内的引导解决现有问题，又或者你对我们的产品存有任何优化意见，请向客服描述你的情况，我们将高度重视每一位用户的反馈。" TextWrapping="Wrap" />
+                <Button Grid.Column="1" Classes="listitem" Padding="0" MinHeight="0"
+                VerticalAlignment="Top" Margin="20,0,0,0">
+                <TextBlock Text="联系客服" Foreground="{DynamicResource TextMutedBrush}" />
+                </Button>
+                </Grid>
+                </StackPanel>
+                </StackPanel>
                 </StackPanel>
                 </StackPanel>
             </ScrollViewer>

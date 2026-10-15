@@ -592,6 +592,23 @@ public partial class MainWindow : Window, IWindowService
         e.Handled = true;
     }
 
+        /// <summary>点话筒 = 开/关麦克风;点耳机 = 开/关静音听,图标切成带红斜杠的禁用态。</summary>
+        private void OnMicButtonClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            if (DataContext is MainWindowViewModel vm && vm.MicPanel.ToggleMuteCommand.CanExecute(null))
+            {
+                vm.MicPanel.ToggleMuteCommand.Execute(null);
+            }
+        }
+
+        private void OnHeadphoneButtonClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            if (DataContext is MainWindowViewModel vm && vm.HeadphonePanel.ToggleDeafenCommand.CanExecute(null))
+            {
+                vm.HeadphonePanel.ToggleDeafenCommand.Execute(null);
+            }
+        }
+
     private void OnDeviceIconPointerEntered(object? sender, PointerEventArgs e)
     {
         if (sender is Control anchor)

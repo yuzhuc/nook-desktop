@@ -144,6 +144,7 @@
                             <StackPanel Orientation="Horizontal" Spacing="6">
 
                                 <Button x:Name="MicButton"
+                                        Click="OnMicButtonClick"
                                         Classes="devicon bubbleicon"
                                         FocusAdorner="{x:Null}"
                                         Height="28" MinHeight="0" Padding="0"
@@ -153,12 +154,20 @@
                                         <Path Classes="icon"
                                               Data="{StaticResource IconMic}"
                                               Width="20" Height="20"
-                                              Stretch="Uniform"
+                                              IsVisible="{Binding !MicPanel.IsMuted}" Stretch="Uniform"
                                               Canvas.Left="6" Canvas.Top="4" />
+                                              <Path Classes="icon"
+                                                    Data="{StaticResource IconMicOff}"
+                                                    Width="20" Height="20"
+                                                    Stroke="{DynamicResource DangerBrush}"
+                                                    IsVisible="{Binding MicPanel.IsMuted}"
+                                                    Stretch="Uniform"
+                                                    Canvas.Left="6" Canvas.Top="4" />
                                     </Canvas>
                                 </Button>
 
                                 <Button x:Name="HeadphoneButton"
+                                        Click="OnHeadphoneButtonClick"
                                         Classes="devicon bubbleicon"
                                         FocusAdorner="{x:Null}"
                                         Height="28" MinHeight="0" Padding="0"
@@ -168,8 +177,15 @@
                                         <Path Classes="icon"
                                               Data="{StaticResource IconHeadphones}"
                                               Width="20" Height="20"
-                                              Stretch="Uniform"
+                                              IsVisible="{Binding !HeadphonePanel.IsDeafened}" Stretch="Uniform"
                                               Canvas.Left="4" Canvas.Top="5" />
+                                              <Path Classes="icon"
+                                                    Data="{StaticResource IconHeadphoneOff}"
+                                                    Width="20" Height="20"
+                                                    Stroke="{DynamicResource DangerBrush}"
+                                                    IsVisible="{Binding HeadphonePanel.IsDeafened}"
+                                                    Stretch="Uniform"
+                                                    Canvas.Left="4" Canvas.Top="5" />
                                     </Canvas>
                                 </Button>
                             </StackPanel>
