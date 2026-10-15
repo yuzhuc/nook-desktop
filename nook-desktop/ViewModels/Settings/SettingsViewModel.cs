@@ -65,6 +65,15 @@ public sealed class SettingsViewModel : ViewModelBase
             OnPropertyChanged(nameof(IsAccountSection));
             OnPropertyChanged(nameof(IsPrivacySection));
             OnPropertyChanged(nameof(IsVoiceSection));
+            OnPropertyChanged(nameof(IsKeyboardSection));
+            OnPropertyChanged(nameof(IsAppearanceSection));
+            OnPropertyChanged(nameof(IsNotifySection));
+            OnPropertyChanged(nameof(IsOverlaySection));
+            OnPropertyChanged(nameof(IsBoostSection));
+            OnPropertyChanged(nameof(IsStreamerSection));
+            OnPropertyChanged(nameof(IsChangelogSection));
+            OnPropertyChanged(nameof(IsSystemSection));
+            OnPropertyChanged(nameof(IsSupportSection));
             OnPropertyChanged(nameof(IsPlaceholderSection));
         }
     }
@@ -79,6 +88,25 @@ public sealed class SettingsViewModel : ViewModelBase
 
 
     public bool IsVoiceSection => Section == "voice";
+
+    public bool IsKeyboardSection => Section == "keyboard";
+
+    public bool IsAppearanceSection => Section == "appearance";
+
+    public bool IsNotifySection => Section == "notify";
+
+    public bool IsOverlaySection => Section == "overlay";
+
+    public bool IsBoostSection => Section == "boost";
+
+    public bool IsStreamerSection => Section == "streamer";
+
+    public bool IsChangelogSection => Section == "changelog";
+
+    public bool IsSystemSection => Section == "system";
+
+    public bool IsSupportSection => Section == "support";
+
 
     public bool IsPlaceholderSection =>
         !IsAccountSection && !IsVoiceSection;

@@ -60,6 +60,79 @@
                             <TextBlock Text="语音设置" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
+                    <!-- 语音设置下面的分栏:照 Oopz 摆齐,内容先空着 -->
+                    <Button Classes="listitem" Classes.selected="{Binding IsKeyboardSection}"
+                            HorizontalContentAlignment="Left"
+                            Command="{Binding SelectSectionCommand}" CommandParameter="keyboard">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Path Classes="icon" Data="{StaticResource IconList}" Width="16" Height="16" VerticalAlignment="Center" />
+                            <TextBlock Text="按键设置" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="listitem" Classes.selected="{Binding IsAppearanceSection}"
+                            HorizontalContentAlignment="Left"
+                            Command="{Binding SelectSectionCommand}" CommandParameter="appearance">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Path Classes="icon" Data="{StaticResource IconTag}" Width="16" Height="16" VerticalAlignment="Center" />
+                            <TextBlock Text="外观设置" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="listitem" Classes.selected="{Binding IsNotifySection}"
+                            HorizontalContentAlignment="Left"
+                            Command="{Binding SelectSectionCommand}" CommandParameter="notify">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Path Classes="icon" Data="{StaticResource IconBell}" Width="16" Height="16" VerticalAlignment="Center" />
+                            <TextBlock Text="通知设置" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="listitem" Classes.selected="{Binding IsOverlaySection}"
+                            HorizontalContentAlignment="Left"
+                            Command="{Binding SelectSectionCommand}" CommandParameter="overlay">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Path Classes="icon" Data="{StaticResource IconScreen}" Width="16" Height="16" VerticalAlignment="Center" />
+                            <TextBlock Text="屏幕覆盖" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="listitem" Classes.selected="{Binding IsBoostSection}"
+                            HorizontalContentAlignment="Left"
+                            Command="{Binding SelectSectionCommand}" CommandParameter="boost">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Path Classes="icon" Data="{StaticResource IconExpand}" Width="16" Height="16" VerticalAlignment="Center" />
+                            <TextBlock Text="全球加速" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="listitem" Classes.selected="{Binding IsStreamerSection}"
+                            HorizontalContentAlignment="Left"
+                            Command="{Binding SelectSectionCommand}" CommandParameter="streamer">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Path Classes="icon" Data="{StaticResource IconMic}" Width="16" Height="16" VerticalAlignment="Center" />
+                            <TextBlock Text="主播模式" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="listitem" Classes.selected="{Binding IsChangelogSection}"
+                            HorizontalContentAlignment="Left"
+                            Command="{Binding SelectSectionCommand}" CommandParameter="changelog">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Path Classes="icon" Data="{StaticResource IconDocUp}" Width="16" Height="16" VerticalAlignment="Center" />
+                            <TextBlock Text="更新记录" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="listitem" Classes.selected="{Binding IsSystemSection}"
+                            HorizontalContentAlignment="Left"
+                            Command="{Binding SelectSectionCommand}" CommandParameter="system">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Path Classes="icon" Data="{StaticResource IconSettings}" Width="16" Height="16" VerticalAlignment="Center" />
+                            <TextBlock Text="系统设置" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="listitem" Classes.selected="{Binding IsSupportSection}"
+                            HorizontalContentAlignment="Left"
+                            Command="{Binding SelectSectionCommand}" CommandParameter="support">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Path Classes="icon" Data="{StaticResource IconHeadphones}" Width="16" Height="16" VerticalAlignment="Center" />
+                            <TextBlock Text="帮助反馈" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
                 </ScrollViewer>
 
