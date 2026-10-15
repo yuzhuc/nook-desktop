@@ -258,12 +258,31 @@
                     <StackPanel Spacing="10">
                         <TextBlock Classes="h2" Text="麦克风测试" />
                         <StackPanel Orientation="Horizontal" Spacing="14">
-                            <Button Classes="secondary" Content="开始试麦" />
+                            <TextBlock Text="开始试麦" VerticalAlignment="Center" />
                             <Border Width="360" Height="26" CornerRadius="4"
                                     Background="{DynamicResource SurfaceHoverBrush}" />
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
+
+                    <StackPanel Spacing="10">
+                        <TextBlock Classes="h2" Text="语音输入模式" />
+                        <StackPanel Spacing="8" Margin="0,4,0,0">
+                            <RadioButton GroupName="voiceinput" Content="自由发言" IsChecked="False" />
+                            <RadioButton GroupName="voiceinput" Content="按键说话" IsChecked="True" />
+                        </StackPanel>
+                        <TextBlock Text="F2" Margin="30,2,0,6" />
+                        <Border Classes="divider" />
+                    </StackPanel>
+
+                    <StackPanel Spacing="10">
+                        <TextBlock Classes="h2" Text="快捷键" />
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Text="麦克风开启/关闭" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="1" Classes="caption" Text="F2" VerticalAlignment="Center" />
+                        </Grid>
+                        <Border Classes="divider" />
+                    </StackPanel>
 
                 <!-- 其余分栏先摆空状态 -->
                 <StackPanel Spacing="18" IsVisible="{Binding IsPlaceholderSection}">
