@@ -3,12 +3,23 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia.Media;
 using nook_desktop.Core.Mvvm;
 using nook_desktop.Core.Navigation;
 using nook_desktop.Models;
 using nook_desktop.Services;
 
 namespace nook_desktop.ViewModels.Room;
+
+/// <summary>域设置左边的五个分栏,顺序照 Oopz。</summary>
+public enum GroupSettingsSection
+{
+    Basic,
+    Identity,
+    Logs,
+    Members,
+    Bans,
+}
 
 public sealed class RoomViewModel : ViewModelBase
 {
@@ -26,6 +37,8 @@ public sealed class RoomViewModel : ViewModelBase
     private string _memberSearchText = string.Empty;
     private bool _isMemberSearchOpen;
     private RoomChannelViewModel? _menuChannel;
+    private bool _isGroupSettingsOpen;
+    private GroupSettingsSection _groupSettingsSection = GroupSettingsSection.Basic;
 
     public RoomViewModel(INavigationService navigation, AppServices services, Group group)
     {
@@ -67,6 +80,9 @@ public sealed class RoomViewModel : ViewModelBase
             IsGroupSettingsMenuOpen = true;
         });
         CloseGroupSettingsMenuCommand = new RelayCommand(() => IsGroupSettingsMenuOpen = false);
+        OpenGroupSettingsCommand = new RelayCommand(OpenGroupSettings);
+        CloseGroupSettingsCommand = new RelayCommand(() => IsGroupSettingsOpen = false);
+        SelectGroupSettingsSectionCommand = new RelayCommand<string>(SelectGroupSettingsSection);
         CreateChannelCommand = new RelayCommand(CreateChannel);
         CreateCategoryCommand = new RelayCommand(CreateCategory);
         CloseChannelMenuCommand = new RelayCommand(() => IsChannelMenuOpen = false);
@@ -223,6 +239,12 @@ public sealed class RoomViewModel : ViewModelBase
 
     public RelayCommand CloseGroupSettingsMenuCommand { get; }
 
+    public RelayCommand OpenGroupSettingsCommand { get; }
+
+    public RelayCommand CloseGroupSettingsCommand { get; }
+
+    public RelayCommand<string> SelectGroupSettingsSectionCommand { get; }
+
     /// <summary>群组设置菜单里的「创建频道 / 创建分类」:先给个默认名字,建完刷新左栏。</summary>
     public RelayCommand CreateChannelCommand { get; }
 
@@ -280,9 +302,83 @@ public sealed class RoomViewModel : ViewModelBase
         private set => SetProperty(ref _isGroupSettingsMenuOpen, value);
     }
 
+    /// <summary>域设置页整块盖住三栏;关掉时回到原来的频道页。</summary>
+    public bool IsGroupSettingsOpen
+    {
+        get => _isGroupSettingsOpen;
+        private set => SetProperty(ref _isGroupSettingsOpen, value);
+    }
+
+    public GroupSettingsSection SettingsSection
+    {
+        get => _groupSettingsSection;
+        private set
+        {
+            if (!SetProperty(ref _groupSettingsSection, value))
+            {
+                return;
+            }
+
+            OnPropertyChanged(nameof(IsBasicSectionSelected));
+            OnPropertyChanged(nameof(IsIdentitySectionSelected));
+            OnPropertyChanged(nameof(IsLogsSectionSelected));
+            OnPropertyChanged(nameof(IsMembersSectionSelected));
+            OnPropertyChanged(nameof(IsBansSectionSelected));
+        }
+    }
+
+    public bool IsBasicSectionSelected => SettingsSection == GroupSettingsSection.Basic;
+
+    public bool IsIdentitySectionSelected => SettingsSection == GroupSettingsSection.Identity;
+
+    public bool IsLogsSectionSelected => SettingsSection == GroupSettingsSection.Logs;
+
+    public bool IsMembersSectionSelected => SettingsSection == GroupSettingsSection.Members;
+
+    public bool IsBansSectionSelected => SettingsSection == GroupSettingsSection.Bans;
+
+    public string GroupName => Group.Name;
+
+    public string GroupInitial => Group.Name.Length > 0 ? Group.Name[..1] : "?";
+
+    public IBrush GroupAccentBrush
+    {
+        get
+        {
+            try
+            {
+                return new SolidColorBrush(Color.Parse(Group.AccentColor));
+            }
+            catch (FormatException)
+            {
+                return Brushes.SlateGray;
+            }
+        }
+    }
+
 
 
     private Task ToggleMuteAsync() => _services.VoiceSession.SetMutedAsync(!IsMuted);
+    /// <summary>域设置导航:关掉 ⋮ 菜单,整页切到设置。</summary>
+    private void OpenGroupSettings()
+    {
+        IsGroupSettingsMenuOpen = false;
+        IsChannelMenuOpen = false;
+        IsGroupSettingsOpen = true;
+    }
+
+    private void SelectGroupSettingsSection(string? section)
+    {
+        SettingsSection = section switch
+        {
+            "Identity" => GroupSettingsSection.Identity,
+            "Logs" => GroupSettingsSection.Logs,
+            "Members" => GroupSettingsSection.Members,
+            "Bans" => GroupSettingsSection.Bans,
+            _ => GroupSettingsSection.Basic,
+        };
+    }
+
 
     private Task ToggleDeafenAsync() => _services.VoiceSession.SetDeafenedAsync(!IsDeafened);
 

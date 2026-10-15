@@ -534,6 +534,299 @@
             </Border>
         </Grid>
         <!--
+            域设置(照 Oopz):整块盖住三栏,左列是设置导航、右边是内容。
+            只有「基本信息」是完整内容,身份组/管理日志/成员/封禁先按 Oopz 的空状态摆。
+        -->
+        <Grid x:Name="GroupSettingsPage"
+              IsVisible="{Binding IsGroupSettingsOpen}"
+              Background="{DynamicResource SurfaceBaseBrush}">
+            <Grid ColumnDefinitions="240,*">
+                <Border Grid.Column="0"
+                        Background="{DynamicResource SurfaceRaisedBrush}"
+                        BorderBrush="{DynamicResource DividerBrush}"
+                        BorderThickness="0,0,1,0">
+                    <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="16,16,10,16">
+                        <Button Grid.Row="0" Classes="listitem" HorizontalContentAlignment="Left"
+                                Command="{Binding CloseGroupSettingsCommand}">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <Path Classes="icon" Data="{StaticResource IconChevronLeft}" Width="14" Height="14" VerticalAlignment="Center" />
+                                <TextBlock Text="返回" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+
+                        <StackPanel Grid.Row="1" Margin="0,14,0,0" Spacing="2">
+                            <TextBlock Classes="caption" Text="域设置" Margin="6,0,0,6" />
+
+                            <Button Classes="listitem" Classes.selected="{Binding IsBasicSectionSelected}"
+                                    HorizontalContentAlignment="Left"
+                                    Command="{Binding SelectGroupSettingsSectionCommand}" CommandParameter="Basic">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <Path Classes="icon" Data="{StaticResource IconInfo}" Width="16" Height="16" VerticalAlignment="Center" />
+                                    <TextBlock Text="基本信息" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+
+                            <Button Classes="listitem" Classes.selected="{Binding IsIdentitySectionSelected}"
+                                    HorizontalContentAlignment="Left"
+                                    Command="{Binding SelectGroupSettingsSectionCommand}" CommandParameter="Identity">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <Path Classes="icon" Data="{StaticResource IconUsers}" Width="16" Height="16" VerticalAlignment="Center" />
+                                    <TextBlock Text="身份组" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+
+                            <Button Classes="listitem" Classes.selected="{Binding IsLogsSectionSelected}"
+                                    HorizontalContentAlignment="Left"
+                                    Command="{Binding SelectGroupSettingsSectionCommand}" CommandParameter="Logs">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <Path Classes="icon" Data="{StaticResource IconList}" Width="16" Height="16" VerticalAlignment="Center" />
+                                    <TextBlock Text="管理日志" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+
+                            <TextBlock Classes="caption" Text="成员管理" Margin="6,14,0,6" />
+
+                            <Button Classes="listitem" Classes.selected="{Binding IsMembersSectionSelected}"
+                                    HorizontalContentAlignment="Left"
+                                    Command="{Binding SelectGroupSettingsSectionCommand}" CommandParameter="Members">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <Path Classes="icon" Data="{StaticResource IconUsers}" Width="16" Height="16" VerticalAlignment="Center" />
+                                    <TextBlock Text="成员" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+
+                            <Button Classes="listitem" Classes.selected="{Binding IsBansSectionSelected}"
+                                    HorizontalContentAlignment="Left"
+                                    Command="{Binding SelectGroupSettingsSectionCommand}" CommandParameter="Bans">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <Path Classes="icon" Data="{StaticResource IconBan}" Width="16" Height="16" VerticalAlignment="Center" />
+                                    <TextBlock Text="封禁" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+
+                        <Button Grid.Row="3" Classes="listitem" HorizontalContentAlignment="Left">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <Path Classes="icon" Data="{StaticResource IconTrash}" Stroke="{DynamicResource DangerBrush}"
+                                      Width="16" Height="16" VerticalAlignment="Center" />
+                                <TextBlock Text="删除域" Foreground="{DynamicResource DangerBrush}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                </Border>
+
+                <ScrollViewer Grid.Column="1" Padding="32,22,32,32" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Spacing="26">
+
+                        <!-- 基本信息 -->
+                        <StackPanel Spacing="24" IsVisible="{Binding IsBasicSectionSelected}">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <Path Classes="icon" Data="{StaticResource IconInfo}" Width="18" Height="18" VerticalAlignment="Center" />
+                                <TextBlock Classes="h1" Text="基本信息" VerticalAlignment="Center" />
+                            </StackPanel>
+
+                            <Grid ColumnDefinitions="Auto,*">
+                                <Border Width="130" Height="130" CornerRadius="14" Background="{Binding GroupAccentBrush}">
+                                    <TextBlock Text="{Binding GroupInitial}" FontSize="38" FontWeight="SemiBold"
+                                               Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                                <StackPanel Grid.Column="1" Margin="20,0,0,0" Spacing="4" VerticalAlignment="Center">
+                                    <TextBlock Text="域头像" />
+                                    <TextBlock Classes="caption" Text="可上传小于 10 MB 的 PNG、JPG" />
+                                    <TextBlock Classes="caption" TextWrapping="Wrap" HorizontalAlignment="Left" Width="220"
+                                               Text="域等级达到 LV.3 后可上传 GIF、WEBP 格式的动态头像" />
+                                    <Button Classes="listitem" Padding="0" HorizontalAlignment="Left" Margin="0,4,0,0">
+                                        <TextBlock Text="上传域头像" />
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="域名称" />
+                                <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,10">
+                                    <TextBlock Text="{Binding GroupName}" VerticalAlignment="Center" />
+                                    <Button Grid.Column="1" Classes="listitem" Padding="0">
+                                        <TextBlock Text="修改域名称" />
+                                    </Button>
+                                </Grid>
+                                <Border Classes="divider" />
+                            </StackPanel>
+
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="域横幅" />
+                                <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,10">
+                                    <StackPanel Spacing="4" Width="240">
+                                        <TextBlock Classes="caption" Text="可上传小于 10 MB 的 PNG、JPG" />
+                                        <TextBlock Classes="caption" TextWrapping="Wrap" HorizontalAlignment="Left"
+                                                   Text="域等级达到 LV.4 后可上传 GIF、WEBP 格式的动态横幅,建议使用至少 436*260 大小的图片" />
+                                        <Button Classes="listitem" Padding="0" HorizontalAlignment="Left" Margin="0,4,0,0">
+                                            <TextBlock Text="上传域横幅" />
+                                        </Button>
+                                    </StackPanel>
+                                    <Border Grid.Column="1" Width="300" Height="150" CornerRadius="10"
+                                            Background="{DynamicResource SurfaceHoverBrush}"
+                                            BorderBrush="{DynamicResource BorderStrongBrush}" BorderThickness="1" />
+                                </Grid>
+                                <Border Classes="divider" />
+                            </StackPanel>
+
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="域介绍" />
+                                <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,10">
+                                    <TextBlock Classes="caption" Text="暂无介绍" VerticalAlignment="Center" />
+                                    <Button Grid.Column="1" Classes="listitem" Padding="0">
+                                        <TextBlock Text="修改域介绍" />
+                                    </Button>
+                                </Grid>
+                                <Border Classes="divider" />
+                            </StackPanel>
+
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="域搜索设置" />
+                                <TextBlock Classes="caption" Text="设置用户将如何搜索到你的域" />
+                                <Grid ColumnDefinitions="*,Auto" Margin="0,4,0,10">
+                                    <TextBlock Text="允许通过ID搜索域加入" VerticalAlignment="Center" />
+                                    <Path Grid.Column="1" Classes="icon" Data="{StaticResource IconChevronRight}"
+                                          Width="14" Height="14" VerticalAlignment="Center" />
+                                </Grid>
+                                <Border Classes="divider" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- 身份组 -->
+                        <StackPanel Spacing="18" IsVisible="{Binding IsIdentitySectionSelected}">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <Path Classes="icon" Data="{StaticResource IconUsers}" Width="18" Height="18" VerticalAlignment="Center" />
+                                <TextBlock Classes="h1" Text="身份组" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="14">
+                                <Button Classes="primary" Content="创建身份组" />
+                                <TextBlock Classes="caption" VerticalAlignment="Center" TextWrapping="Wrap"
+                                           Text="拖动调整身份组等级排序,点击名称即可编辑信息/权限" />
+                            </StackPanel>
+                            <Grid ColumnDefinitions="180,*,120,60" Margin="0,8,0,0">
+                                <TextBlock Classes="caption" Text="身份组 5/100" />
+                                <TextBlock Grid.Column="1" Classes="caption" Text="描述" />
+                                <TextBlock Grid.Column="2" Classes="caption" Text="成员列表显示" />
+                                <TextBlock Grid.Column="3" Classes="caption" Text="操作" />
+                            </Grid>
+                            <StackPanel>
+                                <Grid ColumnDefinitions="180,*,120,60" Margin="0,12" >
+                                    <TextBlock Text="域主" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="1" Classes="caption" Text="域的所有者" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="2" Text="✓" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="3" Text="⋯" VerticalAlignment="Center" />
+                                </Grid>
+                                <Border Classes="divider" />
+                                <Grid ColumnDefinitions="180,*,120,60" Margin="0,12">
+                                    <TextBlock Text="高级管理员" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="1" Classes="caption" Text="" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="2" Text="✓" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="3" Text="⋯" VerticalAlignment="Center" />
+                                </Grid>
+                                <Border Classes="divider" />
+                                <Grid ColumnDefinitions="180,*,120,60" Margin="0,12">
+                                    <TextBlock Text="管理员" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="1" Classes="caption" Text="" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="2" Text="✓" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="3" Text="⋯" VerticalAlignment="Center" />
+                                </Grid>
+                                <Border Classes="divider" />
+                                <Grid ColumnDefinitions="180,*,120,60" Margin="0,12">
+                                    <TextBlock Text="嘉宾" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="1" Classes="caption" Text="" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="2" Text="✓" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="3" Text="⋯" VerticalAlignment="Center" />
+                                </Grid>
+                                <Border Classes="divider" />
+                                <Grid ColumnDefinitions="180,*,120,60" Margin="0,12">
+                                    <TextBlock Text="全体成员" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="1" Classes="caption" Text="域的默认身份组" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="2" Text="" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="3" Text="" VerticalAlignment="Center" />
+                                </Grid>
+                                <Border Classes="divider" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- 管理日志 -->
+                        <StackPanel Spacing="18" IsVisible="{Binding IsLogsSectionSelected}">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <Path Classes="icon" Data="{StaticResource IconList}" Width="18" Height="18" VerticalAlignment="Center" />
+                                <TextBlock Classes="h1" Text="管理日志" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <TextBlock Classes="caption" TextWrapping="Wrap"
+                                       Text="记录域内的管理操作,当前支持查看「移出域」「封禁」「用户加入退出域」的操作记录" />
+                            <Grid ColumnDefinitions="*,Auto" Width="260" HorizontalAlignment="Left" Margin="0,4,0,0">
+                                <TextBlock Text="全部" VerticalAlignment="Center" Margin="0,0,0,8" />
+                                <Path Grid.Column="1" Classes="icon" Data="{StaticResource IconChevronRight}"
+                                      Width="14" Height="14" VerticalAlignment="Center" Margin="0,0,0,8" />
+                            </Grid>
+                            <Border Classes="divider" Width="260" HorizontalAlignment="Left" />
+                            <StackPanel Spacing="10" HorizontalAlignment="Center" Margin="0,80,0,0">
+                                <Path Classes="icon" Data="{StaticResource IconDocUp}" Width="46" Height="46"
+                                      HorizontalAlignment="Center" Stroke="{DynamicResource TextMutedBrush}" />
+                                <TextBlock Classes="caption" Text="暂无管理记录" HorizontalAlignment="Center" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- 成员 -->
+                        <StackPanel Spacing="18" IsVisible="{Binding IsMembersSectionSelected}">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <Path Classes="icon" Data="{StaticResource IconUsers}" Width="18" Height="18" VerticalAlignment="Center" />
+                                <TextBlock Classes="h1" Text="成员" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <Grid ColumnDefinitions="200,180,160,*">
+                                <TextBlock Classes="caption" Text="搜索成员" Margin="0,0,0,8" />
+                                <TextBlock Grid.Column="1" Classes="caption" Text="全体成员" Margin="0,0,0,8" />
+                                <TextBlock Grid.Column="2" Classes="caption" Text="排序 ↑" Margin="0,0,0,8" />
+                            </Grid>
+                            <Border Classes="divider" />
+                            <Grid ColumnDefinitions="*,180,160,160">
+                                <TextBlock Classes="caption" Text="{Binding Members.Count, StringFormat='成员 - {0}'}" />
+                                <TextBlock Grid.Column="1" Classes="caption" Text="身份组" />
+                                <TextBlock Grid.Column="2" Classes="caption" Text="活跃分（本月/累计）" />
+                                <TextBlock Grid.Column="3" Classes="caption" Text="成员加入时间" />
+                            </Grid>
+                            <ItemsControl ItemsSource="{Binding Members}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="models:RoomMember">
+                                        <Grid ColumnDefinitions="*,180,160,160" Margin="0,10">
+                                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                                <Border Width="26" Height="26" CornerRadius="13"
+                                                        Background="{DynamicResource SurfaceHoverBrush}">
+                                                    <TextBlock Text="{Binding Profile.DisplayName[0]}"
+                                                               FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                </Border>
+                                                <TextBlock Text="{Binding Profile.DisplayName}" VerticalAlignment="Center" />
+                                            </StackPanel>
+                                            <TextBlock Grid.Column="1" Classes="caption" Text="成员" VerticalAlignment="Center" />
+                                            <TextBlock Grid.Column="2" Classes="caption" Text="-" VerticalAlignment="Center" />
+                                            <TextBlock Grid.Column="3" Classes="caption" Text="-" VerticalAlignment="Center" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+
+                        <!-- 封禁 -->
+                        <StackPanel Spacing="18" IsVisible="{Binding IsBansSectionSelected}">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <Path Classes="icon" Data="{StaticResource IconBan}" Width="18" Height="18" VerticalAlignment="Center" />
+                                <TextBlock Classes="h1" Text="封禁" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <StackPanel Spacing="10" HorizontalAlignment="Center" Margin="0,140,0,0">
+                                <Path Classes="icon" Data="{StaticResource IconBan}" Width="46" Height="46"
+                                      HorizontalAlignment="Center" Stroke="{DynamicResource TextMutedBrush}" />
+                                <TextBlock Classes="caption" Text="暂无封禁成员" HorizontalAlignment="Center" />
+                            </StackPanel>
+                        </StackPanel>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+        <!--
             群组设置菜单(频道栏 ⋮ 那个):窗口内浮层,位置由 RoomView.axaml.cs 贴着按钮摆。
             颜色/圆角照 Oopz 实测(#1D1D1D 底 + #282828 描边)。
         -->
@@ -567,7 +860,7 @@
                         <Viewbox Grid.Column="1" Width="17" Height="17" VerticalAlignment="Center"><Path Classes="icon" Data="{StaticResource IconPerson}" Stretch="None" Width="24" Height="24" /></Viewbox>
                     </Grid>
                 </Button>
-                <Button Classes="menuitem" Command="{Binding CloseGroupSettingsMenuCommand}">
+                <Button Classes="menuitem" Command="{Binding OpenGroupSettingsCommand}">
                     <Grid ColumnDefinitions="*,Auto">
                         <TextBlock Text="域设置" VerticalAlignment="Center" />
                         <Viewbox Grid.Column="1" Width="17" Height="17" VerticalAlignment="Center"><Path Classes="icon" Data="{StaticResource IconSettings}" Stretch="None" Width="24" Height="24" /></Viewbox>
