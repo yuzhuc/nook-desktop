@@ -263,7 +263,6 @@
                                     Background="{DynamicResource SurfaceHoverBrush}" />
                         </StackPanel>
                     </StackPanel>
-                </StackPanel>
 
                     <StackPanel Spacing="10">
                         <TextBlock Classes="h2" Text="语音输入模式" />
@@ -283,7 +282,7 @@
                         </Grid>
                         <Border Classes="divider" />
                     </StackPanel>
-
+                </StackPanel>
                 <!-- 其余分栏先摆空状态 -->
                 <StackPanel Spacing="18" IsVisible="{Binding IsPlaceholderSection}">
                     <TextBlock Classes="h1" Text="暂未实现" />
