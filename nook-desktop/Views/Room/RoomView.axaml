@@ -82,7 +82,7 @@
                             <TextBlock FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" Text="{Binding Group.Id, StringFormat='ID:{0}'}" />
                         </Border>
                     </StackPanel>
-                    <ScrollViewer Grid.Row="1" Margin="0,12,0,0" Padding="10,0">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1" Margin="0,12,0,0" Padding="10,0">
                         <Panel x:Name="ChannelListLayer">
                             <!--
                                 选中频道的高亮块:放在行下面一层,切频道时平移过去。
@@ -196,7 +196,7 @@
                     </Grid>
                 </Border>
 
-                <ScrollViewer Grid.Row="1" Padding="20,16" IsVisible="{Binding !IsComposerExpanded}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1" Padding="20,16" IsVisible="{Binding !IsComposerExpanded}">
                     <StackPanel Spacing="16">
 
 
@@ -488,7 +488,7 @@
                         </Border.Transitions>
                     </Border>
 
-                    <ScrollViewer Grid.Row="2" Padding="23,14,10,10">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="2" Padding="23,14,10,10">
                         <ItemsControl ItemsSource="{Binding VisibleMembers}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate DataType="models:RoomMember">
@@ -554,7 +554,7 @@
                             </StackPanel>
                         </Button>
 
-                        <ScrollViewer Grid.Row="1" Margin="0,14,0,0" HorizontalScrollBarVisibility="Disabled">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1" Margin="0,14,0,0" HorizontalScrollBarVisibility="Disabled">
                         <StackPanel Spacing="2">
                             <TextBlock Classes="caption" Text="域设置" Margin="6,0,0,6" />
 
@@ -617,7 +617,7 @@
                     </Grid>
                 </Border>
 
-                <ScrollViewer Grid.Column="1" Padding="32,22,32,32" HorizontalScrollBarVisibility="Disabled">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Column="1" Padding="32,22,32,32" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel Spacing="26">
 
                         <!-- 基本信息 -->

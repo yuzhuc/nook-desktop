@@ -23,7 +23,7 @@
                     </StackPanel>
                 </Button>
 
-                <ScrollViewer Grid.Row="1" Margin="0,14,0,0" HorizontalScrollBarVisibility="Disabled">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1" Margin="0,14,0,0" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel Spacing="2">
                     <TextBlock Classes="caption" Text="用户设置" Margin="6,0,0,6" />
 
@@ -140,7 +140,7 @@
             </Grid>
         </Border>
 
-        <ScrollViewer Grid.Column="1" Padding="32,22,32,32" HorizontalScrollBarVisibility="Disabled">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Column="1" Padding="32,22,32,32" HorizontalScrollBarVisibility="Disabled">
             <StackPanel Spacing="24">
 
                 <!-- 账号设置 -->
