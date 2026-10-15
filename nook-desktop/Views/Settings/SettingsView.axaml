@@ -324,13 +324,255 @@
                     </Border>
                 </StackPanel>
 
-                <!-- 其余分栏先摆空状态 -->
-                <StackPanel Spacing="18" IsVisible="{Binding IsPlaceholderSection}">
-                    <TextBlock Classes="h1" Text="暂未实现" />
-                    <TextBlock Classes="caption" Text="这一栏还没有接功能,先占个位置。" />
+
+                <StackPanel Spacing="16" IsVisible="{Binding IsPrivacySection}">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Path Classes="icon" Data="{StaticResource IconSettings}" Width="18" Height="18" VerticalAlignment="Center" />
+                        <TextBlock Classes="h1" Text="隐私设置" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="谁可以私信我" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="所有人" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="允许通过 ID 搜索到我" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="开" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="显示在线状态" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="开" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="好友请求" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="允许" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="黑名单管理" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
                 </StackPanel>
 
-            </StackPanel>
-        </ScrollViewer>
+                <StackPanel Spacing="16" IsVisible="{Binding IsKeyboardSection}">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Path Classes="icon" Data="{StaticResource IconList}" Width="18" Height="18" VerticalAlignment="Center" />
+                        <TextBlock Classes="h1" Text="按键设置" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="按键说话" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="F2" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="麦克风开启/关闭" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="F2" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="耳机静音" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="F3" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="切换频道" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="F4" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="截图" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="Alt+S" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                </StackPanel>
+
+                <StackPanel Spacing="16" IsVisible="{Binding IsNotifySection}">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Path Classes="icon" Data="{StaticResource IconBell}" Width="18" Height="18" VerticalAlignment="Center" />
+                        <TextBlock Classes="h1" Text="通知设置" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="桌面通知" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="开" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="消息声音" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="开" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="语音邀请提醒" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="开" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="免打扰时间段" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="22:00 - 08:00" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                </StackPanel>
+
+                <StackPanel Spacing="16" IsVisible="{Binding IsOverlaySection}">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Path Classes="icon" Data="{StaticResource IconScreen}" Width="18" Height="18" VerticalAlignment="Center" />
+                        <TextBlock Classes="h1" Text="屏幕覆盖" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="屏幕覆盖" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="开" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="显示成员头像" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="开" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="说话时高亮" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="开" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="覆盖位置" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="右上角" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                </StackPanel>
+
+                <StackPanel Spacing="16" IsVisible="{Binding IsBoostSection}">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Path Classes="icon" Data="{StaticResource IconExpand}" Width="18" Height="18" VerticalAlignment="Center" />
+                        <TextBlock Classes="h1" Text="全球加速" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="加速状态" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="未加速" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="加速节点" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="自动选择" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="启动时自动加速" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="开" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="加速模式" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="智能模式" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                </StackPanel>
+
+                <StackPanel Spacing="16" IsVisible="{Binding IsStreamerSection}">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Path Classes="icon" Data="{StaticResource IconMic}" Width="18" Height="18" VerticalAlignment="Center" />
+                        <TextBlock Classes="h1" Text="主播模式" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="主播模式" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="关" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="隐藏加入语音的提示" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="开" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="屏蔽陌生人私信" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="开" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="快捷键提示" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="开" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                </StackPanel>
+
+                <StackPanel Spacing="16" IsVisible="{Binding IsChangelogSection}">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Path Classes="icon" Data="{StaticResource IconDocUp}" Width="18" Height="18" VerticalAlignment="Center" />
+                        <TextBlock Classes="h1" Text="更新记录" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="v1.4.6" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="2026.10.13" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="优化语音连接稳定性" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="2026.09.28" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="新增屏幕覆盖功能" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="2026.09.10" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                </StackPanel>
+
+                <StackPanel Spacing="16" IsVisible="{Binding IsSystemSection}">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Path Classes="icon" Data="{StaticResource IconSettings}" Width="18" Height="18" VerticalAlignment="Center" />
+                        <TextBlock Classes="h1" Text="系统设置" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="开机自动启动" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="开" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="关闭主窗口时最小化到托盘" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="开" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="语言" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="简体中文" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="缓存占用" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="128 MB" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                </StackPanel>
+
+                <StackPanel Spacing="16" IsVisible="{Binding IsSupportSection}">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Path Classes="icon" Data="{StaticResource IconHeadphones}" Width="18" Height="18" VerticalAlignment="Center" />
+                        <TextBlock Classes="h1" Text="帮助反馈" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="意见反馈" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="问题排查" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="查看日志" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="版本号" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="caption" Text="v1.0.0" VerticalAlignment="Center" />
+                    </Grid>
+                    <Border Classes="divider" />
+                </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
     </Grid>
 </UserControl>
