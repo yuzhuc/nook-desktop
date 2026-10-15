@@ -63,13 +63,9 @@ public sealed class SettingsViewModel : ViewModelBase
             }
 
             OnPropertyChanged(nameof(IsAccountSection));
+            OnPropertyChanged(nameof(IsPrivacySection));
             OnPropertyChanged(nameof(IsVoiceSection));
             OnPropertyChanged(nameof(IsPlaceholderSection));
-            OnPropertyChanged(nameof(IsPrivacySection));
-            OnPropertyChanged(nameof(IsInviteSection));
-            OnPropertyChanged(nameof(IsWalletSection));
-            OnPropertyChanged(nameof(IsGiftSection));
-            OnPropertyChanged(nameof(IsLevelSection));
         }
     }
 
@@ -77,13 +73,10 @@ public sealed class SettingsViewModel : ViewModelBase
 
     public bool IsPrivacySection => Section == "privacy";
 
-    public bool IsInviteSection => Section == "invite";
 
-    public bool IsWalletSection => Section == "wallet";
 
-    public bool IsGiftSection => Section == "gift";
 
-    public bool IsLevelSection => Section == "level";
+
 
     public bool IsVoiceSection => Section == "voice";
 

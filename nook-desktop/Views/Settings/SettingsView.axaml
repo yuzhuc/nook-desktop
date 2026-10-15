@@ -23,7 +23,8 @@
                     </StackPanel>
                 </Button>
 
-                <StackPanel Grid.Row="1" Margin="0,14,0,0" Spacing="2">
+                <ScrollViewer Grid.Row="1" Margin="0,14,0,0" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Spacing="2">
                     <TextBlock Classes="caption" Text="用户设置" Margin="6,0,0,6" />
 
                     <Button Classes="listitem" Classes.selected="{Binding IsAccountSection}"
@@ -44,43 +45,10 @@
                         </StackPanel>
                     </Button>
 
-                    <Button Classes="listitem" Classes.selected="{Binding IsInviteSection}"
-                            HorizontalContentAlignment="Left"
-                            Command="{Binding SelectSectionCommand}" CommandParameter="invite">
-                        <StackPanel Orientation="Horizontal" Spacing="10">
-                            <Path Classes="icon" Data="{StaticResource IconGift}" Width="16" Height="16" VerticalAlignment="Center" />
-                            <TextBlock Text="邀请有礼" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
 
-                    <TextBlock Classes="caption" Text="账号服务" Margin="6,14,0,6" />
 
-                    <Button Classes="listitem" Classes.selected="{Binding IsWalletSection}"
-                            HorizontalContentAlignment="Left"
-                            Command="{Binding SelectSectionCommand}" CommandParameter="wallet">
-                        <StackPanel Orientation="Horizontal" Spacing="10">
-                            <Path Classes="icon" Data="{StaticResource IconCopy}" Width="16" Height="16" VerticalAlignment="Center" />
-                            <TextBlock Text="我的钱包" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
 
-                    <Button Classes="listitem" Classes.selected="{Binding IsGiftSection}"
-                            HorizontalContentAlignment="Left"
-                            Command="{Binding SelectSectionCommand}" CommandParameter="gift">
-                        <StackPanel Orientation="Horizontal" Spacing="10">
-                            <Path Classes="icon" Data="{StaticResource IconGift}" Width="16" Height="16" VerticalAlignment="Center" />
-                            <TextBlock Text="我的礼物" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
 
-                    <Button Classes="listitem" Classes.selected="{Binding IsLevelSection}"
-                            HorizontalContentAlignment="Left"
-                            Command="{Binding SelectSectionCommand}" CommandParameter="level">
-                        <StackPanel Orientation="Horizontal" Spacing="10">
-                            <Path Classes="icon" Data="{StaticResource IconList}" Width="16" Height="16" VerticalAlignment="Center" />
-                            <TextBlock Text="财富等级" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
 
                     <TextBlock Classes="caption" Text="应用设置" Margin="6,14,0,6" />
 
@@ -93,6 +61,7 @@
                         </StackPanel>
                     </Button>
                 </StackPanel>
+                </ScrollViewer>
 
                 <TextBlock Grid.Row="3" Classes="caption" Text="{Binding VersionText}" Margin="6,0,0,0" />
             </Grid>
