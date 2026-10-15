@@ -14,7 +14,7 @@
                 Background="{DynamicResource SurfaceRaisedBrush}"
                 BorderBrush="{DynamicResource DividerBrush}"
                 BorderThickness="0,0,1,0">
-            <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="16,16,10,12">
+            <Grid RowDefinitions="Auto,*,Auto" Margin="16,16,10,12">
                 <Button Grid.Row="0" Classes="listitem" HorizontalContentAlignment="Left"
                         Command="{Binding BackCommand}">
                     <StackPanel Orientation="Horizontal" Spacing="6">
@@ -136,7 +136,7 @@
                 </StackPanel>
                 </ScrollViewer>
 
-                <TextBlock Grid.Row="3" Classes="caption" Text="{Binding VersionText}" Margin="6,0,0,0" />
+                <TextBlock Grid.Row="2" Classes="caption" Text="{Binding VersionText}" Margin="6,0,0,0" />
             </Grid>
         </Border>
 

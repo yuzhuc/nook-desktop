@@ -545,7 +545,7 @@
                         Background="{DynamicResource SurfaceRaisedBrush}"
                         BorderBrush="{DynamicResource DividerBrush}"
                         BorderThickness="0,0,1,0">
-                    <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="16,16,10,16">
+                    <Grid RowDefinitions="Auto,*,Auto" Margin="16,16,10,16">
                         <Button Grid.Row="0" Classes="listitem" HorizontalContentAlignment="Left"
                                 Command="{Binding CloseGroupSettingsCommand}">
                             <StackPanel Orientation="Horizontal" Spacing="6">
@@ -554,7 +554,8 @@
                             </StackPanel>
                         </Button>
 
-                        <StackPanel Grid.Row="1" Margin="0,14,0,0" Spacing="2">
+                        <ScrollViewer Grid.Row="1" Margin="0,14,0,0" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel Spacing="2">
                             <TextBlock Classes="caption" Text="域设置" Margin="6,0,0,6" />
 
                             <Button Classes="listitem" Classes.selected="{Binding IsBasicSectionSelected}"
@@ -604,8 +605,9 @@
                                 </StackPanel>
                             </Button>
                         </StackPanel>
+                    </ScrollViewer>
 
-                        <Button Grid.Row="3" Classes="listitem" HorizontalContentAlignment="Left">
+                        <Button Grid.Row="2" Classes="listitem" HorizontalContentAlignment="Left">
                             <StackPanel Orientation="Horizontal" Spacing="10">
                                 <Path Classes="icon" Data="{StaticResource IconTrash}" Stroke="{DynamicResource DangerBrush}"
                                       Width="16" Height="16" VerticalAlignment="Center" />
