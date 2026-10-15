@@ -8,78 +8,227 @@
              x:DataType="vm:SettingsViewModel"
              d:DesignWidth="1180"
              d:DesignHeight="700">
-    <Grid RowDefinitions="Auto,*,Auto">
-
-        <Border Grid.Row="0"
-                Padding="20,16"
-                BorderBrush="{DynamicResource BorderSubtleBrush}"
-                BorderThickness="0,0,0,1">
-            <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                <Button Classes="icon" Command="{Binding BackCommand}" ToolTip.Tip="返回">
-                    <Path Classes="icon" Data="{StaticResource IconChevronLeft}" />
+    <!-- 设置页(照 Oopz):左边导航 + 右边内容,整页铺满。 -->
+    <Grid ColumnDefinitions="240,*">
+        <Border Grid.Column="0"
+                Background="{DynamicResource SurfaceRaisedBrush}"
+                BorderBrush="{DynamicResource DividerBrush}"
+                BorderThickness="0,0,1,0">
+            <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="16,16,10,12">
+                <Button Grid.Row="0" Classes="listitem" HorizontalContentAlignment="Left"
+                        Command="{Binding BackCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <Path Classes="icon" Data="{StaticResource IconChevronLeft}" Width="14" Height="14" VerticalAlignment="Center" />
+                        <TextBlock Text="返回" VerticalAlignment="Center" />
+                    </StackPanel>
                 </Button>
-                <TextBlock Classes="h2" Text="设置" VerticalAlignment="Center" />
-            </StackPanel>
+
+                <StackPanel Grid.Row="1" Margin="0,14,0,0" Spacing="2">
+                    <TextBlock Classes="caption" Text="用户设置" Margin="6,0,0,6" />
+
+                    <Button Classes="listitem" Classes.selected="{Binding IsAccountSection}"
+                            HorizontalContentAlignment="Left"
+                            Command="{Binding SelectSectionCommand}" CommandParameter="account">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Path Classes="icon" Data="{StaticResource IconPerson}" Width="16" Height="16" VerticalAlignment="Center" />
+                            <TextBlock Text="账号设置" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button Classes="listitem" Classes.selected="{Binding IsPrivacySection}"
+                            HorizontalContentAlignment="Left"
+                            Command="{Binding SelectSectionCommand}" CommandParameter="privacy">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Path Classes="icon" Data="{StaticResource IconSettings}" Width="16" Height="16" VerticalAlignment="Center" />
+                            <TextBlock Text="隐私设置" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button Classes="listitem" Classes.selected="{Binding IsInviteSection}"
+                            HorizontalContentAlignment="Left"
+                            Command="{Binding SelectSectionCommand}" CommandParameter="invite">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Path Classes="icon" Data="{StaticResource IconGift}" Width="16" Height="16" VerticalAlignment="Center" />
+                            <TextBlock Text="邀请有礼" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+
+                    <TextBlock Classes="caption" Text="账号服务" Margin="6,14,0,6" />
+
+                    <Button Classes="listitem" Classes.selected="{Binding IsWalletSection}"
+                            HorizontalContentAlignment="Left"
+                            Command="{Binding SelectSectionCommand}" CommandParameter="wallet">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Path Classes="icon" Data="{StaticResource IconCopy}" Width="16" Height="16" VerticalAlignment="Center" />
+                            <TextBlock Text="我的钱包" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button Classes="listitem" Classes.selected="{Binding IsGiftSection}"
+                            HorizontalContentAlignment="Left"
+                            Command="{Binding SelectSectionCommand}" CommandParameter="gift">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Path Classes="icon" Data="{StaticResource IconGift}" Width="16" Height="16" VerticalAlignment="Center" />
+                            <TextBlock Text="我的礼物" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button Classes="listitem" Classes.selected="{Binding IsLevelSection}"
+                            HorizontalContentAlignment="Left"
+                            Command="{Binding SelectSectionCommand}" CommandParameter="level">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Path Classes="icon" Data="{StaticResource IconList}" Width="16" Height="16" VerticalAlignment="Center" />
+                            <TextBlock Text="财富等级" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+
+                    <TextBlock Classes="caption" Text="应用设置" Margin="6,14,0,6" />
+
+                    <Button Classes="listitem" Classes.selected="{Binding IsVoiceSection}"
+                            HorizontalContentAlignment="Left"
+                            Command="{Binding SelectSectionCommand}" CommandParameter="voice">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Path Classes="icon" Data="{StaticResource IconMic}" Width="16" Height="16" VerticalAlignment="Center" />
+                            <TextBlock Text="语音设置" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+                <TextBlock Grid.Row="3" Classes="caption" Text="{Binding VersionText}" Margin="6,0,0,0" />
+            </Grid>
         </Border>
 
-        <ScrollViewer Grid.Row="1" Padding="20">
-            <StackPanel MaxWidth="520" HorizontalAlignment="Center" Spacing="16">
+        <ScrollViewer Grid.Column="1" Padding="32,22,32,32" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Spacing="24">
 
-                <Border Classes="panel" Padding="20,18">
-                    <StackPanel Spacing="16">
-                        <TextBlock Classes="h2" Text="音频" />
+                <!-- 账号设置 -->
+                <StackPanel Spacing="20" IsVisible="{Binding IsAccountSection}">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Path Classes="icon" Data="{StaticResource IconPerson}" Width="18" Height="18" VerticalAlignment="Center" />
+                        <TextBlock Classes="h1" Text="账号设置" VerticalAlignment="Center" />
+                    </StackPanel>
 
-                        <StackPanel Spacing="8">
-                            <Grid ColumnDefinitions="*,Auto">
-                                <TextBlock Grid.Column="0" Text="麦克风音量" />
-                                <TextBlock Grid.Column="1"
-                                           Classes="caption"
-                                           Text="{Binding InputVolume, StringFormat={}{0:F0}}" />
+                    <Grid ColumnDefinitions="Auto,*">
+                        <Border Width="300" Height="330" CornerRadius="14" Background="{DynamicResource SurfaceHoverBrush}"
+                                BorderBrush="{DynamicResource BorderStrongBrush}" BorderThickness="1">
+                            <Grid RowDefinitions="90,*">
+                                <Border CornerRadius="14,14,0,0">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                                            <GradientStop Color="#E8E8E8" Offset="0" />
+                                            <GradientStop Color="#6E6E6E" Offset="0.45" />
+                                            <GradientStop Color="#1A1A1A" Offset="1" />
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                </Border>
+                                <Border Grid.Row="1" Width="72" Height="72" CornerRadius="36"
+                                        Margin="16,-36,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"
+                                        Background="{DynamicResource SurfaceRaisedBrush}"
+                                        BorderBrush="{DynamicResource SurfaceHoverBrush}" BorderThickness="3">
+                                    <TextBlock Text="n" FontSize="26" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                                <StackPanel Grid.Row="1" Margin="16,44,16,16" Spacing="4">
+                                    <TextBlock Classes="h2" Text="nook 用户" />
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <TextBlock Classes="caption" Text="ID: 00000001" />
+                                        <TextBlock Classes="caption" Text="IP: 本机" />
+                                    </StackPanel>
+                                    <TextBlock Classes="caption" Text="这个人很懒什么都没写" TextWrapping="Wrap" />
+                                </StackPanel>
                             </Grid>
-                            <Slider Minimum="0" Maximum="100"
-                                    Value="{Binding InputVolume}" />
+                        </Border>
+
+                        <StackPanel Grid.Column="1" Margin="28,0,0,0" Spacing="22">
+                            <StackPanel Spacing="4">
+                                <TextBlock Classes="caption" Text="用户名" />
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBlock Text="nook 用户" VerticalAlignment="Center" />
+                                    <Button Grid.Column="1" Classes="listitem" Padding="0">
+                                        <TextBlock Text="修改名称" />
+                                    </Button>
+                                </Grid>
+                            </StackPanel>
+
+                            <StackPanel Spacing="4">
+                                <TextBlock Classes="caption" Text="个人 ID" />
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBlock Text="00000001" VerticalAlignment="Center" />
+                                    <Button Grid.Column="1" Classes="listitem" Padding="0">
+                                        <TextBlock Text="复制 ID" />
+                                    </Button>
+                                </Grid>
+                            </StackPanel>
+
+                            <StackPanel Spacing="4">
+                                <TextBlock Classes="caption" Text="自我介绍" />
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBlock Text="200 字以内文字" VerticalAlignment="Center" />
+                                    <Button Grid.Column="1" Classes="listitem" Padding="0">
+                                        <TextBlock Text="编辑介绍" />
+                                    </Button>
+                                </Grid>
+                            </StackPanel>
+
+                            <Border Classes="divider" />
+                            <TextBlock Classes="h2" Text="当前动态" />
+                            <TextBlock Classes="caption" Text="暂无动态" />
                         </StackPanel>
+                    </Grid>
+                </StackPanel>
 
-                        <StackPanel Spacing="8">
-                            <Grid ColumnDefinitions="*,Auto">
-                                <TextBlock Grid.Column="0" Text="扬声器音量" />
-                                <TextBlock Grid.Column="1"
-                                           Classes="caption"
-                                           Text="{Binding OutputVolume, StringFormat={}{0:F0}}" />
-                            </Grid>
-                            <Slider Minimum="0" Maximum="100"
-                                    Value="{Binding OutputVolume}" />
-                        </StackPanel>
+                <!-- 语音设置 -->
+                <StackPanel Spacing="22" IsVisible="{Binding IsVoiceSection}">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Path Classes="icon" Data="{StaticResource IconMic}" Width="18" Height="18" VerticalAlignment="Center" />
+                        <TextBlock Classes="h1" Text="语音设置" VerticalAlignment="Center" />
+                    </StackPanel>
 
-                        <Border Classes="divider" />
+                    <StackPanel Spacing="10">
+                        <TextBlock Classes="h2" Text="麦克风" />
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Text="与系统一致" VerticalAlignment="Center" />
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
+                                <Path Classes="icon" Data="{StaticResource IconMic}" Width="16" Height="16" VerticalAlignment="Center" />
+                                <Slider Minimum="0" Maximum="100" Width="150" Value="{Binding InputVolume}" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
 
-                        <StackPanel Spacing="8">
-                            <TextBlock Text="输入设备" />
-                            <ComboBox PlaceholderText="未检测到设备" IsEnabled="False" />
-                        </StackPanel>
+                    <StackPanel Spacing="10">
+                        <TextBlock Classes="h2" Text="扬声器" />
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Text="与系统一致" VerticalAlignment="Center" />
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
+                                <Path Classes="icon" Data="{StaticResource IconHeadphones}" Width="16" Height="16" VerticalAlignment="Center" />
+                                <Slider Minimum="0" Maximum="100" Width="150" Value="{Binding OutputVolume}" />
+                            </StackPanel>
+                        </Grid>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Text="语音厅" VerticalAlignment="Center" />
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
+                                <Path Classes="icon" Data="{StaticResource IconMusicNote}" Width="16" Height="16" VerticalAlignment="Center" />
+                                <Slider Minimum="0" Maximum="100" Width="150" Value="{Binding OutputVolume}" />
+                            </StackPanel>
+                        </Grid>
+                        <TextBlock Classes="caption" Text="检测到音频设备发生变化时:始终询问我" />
+                    </StackPanel>
 
-                        <StackPanel Spacing="8">
-                            <TextBlock Text="输出设备" />
-                            <ComboBox PlaceholderText="未检测到设备" IsEnabled="False" />
+                    <StackPanel Spacing="10">
+                        <TextBlock Classes="h2" Text="麦克风测试" />
+                        <StackPanel Orientation="Horizontal" Spacing="14">
+                            <Button Classes="secondary" Content="开始试麦" />
+                            <Border Width="360" Height="26" CornerRadius="4"
+                                    Background="{DynamicResource SurfaceHoverBrush}" />
                         </StackPanel>
                     </StackPanel>
-                </Border>
+                </StackPanel>
 
-                <Border Classes="panel" Padding="20,18">
-                    <StackPanel Spacing="16">
-                        <TextBlock Classes="h2" Text="语音" />
+                <!-- 其余分栏先摆空状态 -->
+                <StackPanel Spacing="18" IsVisible="{Binding IsPlaceholderSection}">
+                    <TextBlock Classes="h1" Text="暂未实现" />
+                    <TextBlock Classes="caption" Text="这一栏还没有接功能,先占个位置。" />
+                </StackPanel>
 
-                        <StackPanel Spacing="8">
-                            <TextBlock Text="默认麦克风灵敏度" />
-                            <ComboBox PlaceholderText="默认" IsEnabled="False" />
-                        </StackPanel>
-
-                        <StackPanel Spacing="8">
-                            <TextBlock Text="降噪方式" />
-                            <ComboBox PlaceholderText="默认" IsEnabled="False" />
-                        </StackPanel>
-                    </StackPanel>
-                </Border>
             </StackPanel>
         </ScrollViewer>
     </Grid>

@@ -5,35 +5,65 @@
              xmlns:vm="clr-namespace:nook_desktop.ViewModels.TitleBar"
              mc:Ignorable="d"
              x:Class="nook_desktop.Views.TitleBar.MicPanelView"
-             x:DataType="vm:MicPanelViewModel"
-             Width="260">
-    <Border Classes="flyoutpanel">
-        <StackPanel Spacing="12">
-            <TextBlock Classes="h2" Text="{Binding Title}" />
+             x:DataType="vm:MicPanelViewModel">
+    <!--
+        麦克风面板(照 Oopz 实测):最上面一条音量滑块,下面一行一项,
+        右侧是快捷键 / 开关 / 二级入口。开关目前只有样式,还没接服务。
+    -->
+    <Border Classes="flyoutpanel" Width="180" Padding="10,8">
+        <StackPanel Spacing="1">
+            <Slider Minimum="0" Maximum="100" Value="{Binding Volume}" Margin="3,0,3,8" />
 
-            <StackPanel Spacing="6">
-                <Grid ColumnDefinitions="*,Auto">
-                    <TextBlock Grid.Column="0" Text="麦克风" VerticalAlignment="Center" />
-                    <Button Grid.Column="1"
-                            Classes="secondary"
-                            Padding="10,4"
-                            MinHeight="28"
-                            FontSize="12"
-                            Content="{Binding MuteText}"
-                            Command="{Binding ToggleMuteCommand}" />
+            <Grid ColumnDefinitions="*,Auto,Auto" Margin="8,7,10,7">
+                <TextBlock Text="按键说话" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1" Classes="caption" Text="F2" VerticalAlignment="Center" Margin="0,0,10,0" />
+                <ToggleSwitch Grid.Column="2" IsChecked="True" OnContent="" OffContent=""
+                              MinWidth="0" VerticalAlignment="Center" />
+            </Grid>
+
+            <Grid ColumnDefinitions="*,Auto" Margin="8,7,10,7">
+                <TextBlock Text="AI 智能降噪" VerticalAlignment="Center" />
+                <ToggleSwitch Grid.Column="1" IsChecked="True" OnContent="" OffContent=""
+                              MinWidth="0" VerticalAlignment="Center" />
+            </Grid>
+
+            <Button Classes="panelrow">
+                <Grid ColumnDefinitions="*,Auto,Auto">
+                    <TextBlock Text="降噪模型" VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="1" Classes="caption" Text="深度" VerticalAlignment="Center" Margin="0,0,6,0" />
+                    <Path Grid.Column="2" Classes="icon" Data="{StaticResource IconChevronRight}"
+                          Width="14" Height="14" VerticalAlignment="Center" />
                 </Grid>
-                <ComboBox PlaceholderText="未检测到输入设备" IsEnabled="False" />
-            </StackPanel>
+            </Button>
 
-            <Border Classes="divider" />
+            <Grid ColumnDefinitions="*,Auto" Margin="8,7,10,7">
+                <TextBlock Text="麦克风增强" VerticalAlignment="Center" />
+                <ToggleSwitch Grid.Column="1" IsChecked="True" OnContent="" OffContent=""
+                              MinWidth="0" VerticalAlignment="Center" />
+            </Grid>
 
-            <StackPanel Spacing="6">
-                <Grid ColumnDefinitions="*,Auto">
-                    <TextBlock Grid.Column="0" Text="音量" />
-                    <TextBlock Grid.Column="1" Classes="caption" Text="{Binding VolumeText}" />
+            <Grid ColumnDefinitions="*,Auto" Margin="8,7,10,7">
+                <TextBlock Text="AI 实时变声" VerticalAlignment="Center" />
+                <ToggleSwitch Grid.Column="1" IsChecked="False" OnContent="" OffContent=""
+                              MinWidth="0" VerticalAlignment="Center" />
+            </Grid>
+
+            <Button Classes="panelrow">
+                <Grid ColumnDefinitions="*,Auto,Auto">
+                    <TextBlock Text="音效" VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="1" Classes="caption" Text="请选择" VerticalAlignment="Center" Margin="0,0,6,0" />
+                    <Path Grid.Column="2" Classes="icon" Data="{StaticResource IconChevronRight}"
+                          Width="14" Height="14" VerticalAlignment="Center" />
                 </Grid>
-                <Slider Minimum="0" Maximum="100" Value="{Binding Volume}" />
-            </StackPanel>
+            </Button>
+
+            <Button Classes="panelrow">
+                <Grid ColumnDefinitions="*,Auto">
+                    <TextBlock Text="语音设置" VerticalAlignment="Center" />
+                    <Path Grid.Column="1" Classes="icon" Data="{StaticResource IconSettings}"
+                          Width="15" Height="15" VerticalAlignment="Center" />
+                </Grid>
+            </Button>
         </StackPanel>
     </Border>
 </UserControl>
